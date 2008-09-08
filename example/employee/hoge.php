@@ -1,6 +1,8 @@
 <?php
 
 require dirname(__FILE__) . '/../example.php';
+HermitAutoloader::import(dirname(__FILE__));
+HermitAutoloader::import(dirname(__FILE__) . '/dao');
 
 class Hoge {
     public function execute($pdo){
@@ -15,6 +17,7 @@ class Hoge {
     }
 }
 
+Hermit::bind('Hoge', 'EmployeeDao');
 $pdo = new PDO('sqlite:' . dirname(__FILE__) . '/resource/employee.db');
 $hoge = new Hoge;
 $hoge->execute($pdo);

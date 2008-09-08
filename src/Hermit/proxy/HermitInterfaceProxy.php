@@ -3,14 +3,14 @@
 /**
  * @author nowelium
  */
-class HermitInterfaceProxy {
+class HermitInterfaceProxy implements HermitProxy {
     protected $pdo;
     protected $reflector;
     protected function __construct(ReflectionClass $reflector, $pdo){
         $this->reflector = $reflector;
         $this->pdo = $pdo;
     }
-    public static function delegate(PDO $pdo, ReflectionClass $reflector){
+    public static function delegate(PDO $pdo, ReflectionClass $reflector, $instance = null){
         return new self($reflector, $pdo);
     }
     public function __call($name, $params = array()){
@@ -22,21 +22,21 @@ class HermitInterfaceProxy {
         $method = $annote->getMethod($name);
         switch(true){
         case $annote->hasSql($name):
-            return $this->execute($method, $annote->getSql($name));
+            return $this->execute($method, $params, $annote->getSql($name));
         case $annote->hasQuery($name):
             $sql = 'SELECT * FROM ' . $annote->getTable() . ' WHERE ' . $annote->getQuery($name);
-            return $this->execute($method, $sql);
+            return $this->execute($method, $params, $sql);
         case $annote->hasFile($name):
-            return $this->execute($method, $annote->getFile($name));
+            return $this->execute($method, $params, $annote->getFile($name));
         case $annote->hasPath($name):
-            return $this->execute($method, $annote->getPath($name));
+            return $this->execute($method, $params, $annote->getPath($name));
         case $annote->hasDelegate($name);
             break;
         }
         throw new BadMethodCallException($this->reflector->getName() . '::' . $name);
     }
-    protected static function execute(ReflectionMethod $method, $sql){
-        $stmt = HermitSqlBuilder::prepare($this->pdo, $method, $sql);
+    protected function execute(ReflectionMethod $method, $params, $sql){
+        $stmt = HermitStatementBuilder::prepare($this->pdo, $method, $sql);
         $stmt->execute($params);
         return HermitResultSet::create($stmt, $method);
     }

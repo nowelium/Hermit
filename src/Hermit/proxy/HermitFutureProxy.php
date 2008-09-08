@@ -3,11 +3,7 @@
 /**
  * @author nowelium
  */
-class HermitFutureProxy {
-    protected $pdo;
-    protected $target;
-    public static function delegate(PDO $pdo, $target){
-        $this->pdo = $pdo;
-        $this->target = $target;
+class HermitFutureProxy implements HermitProxy {
+    public static function delegate(PDO $pdo, ReflectionClass $reflector, $target = null){
     }
 }
