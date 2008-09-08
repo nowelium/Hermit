@@ -1,5 +1,7 @@
 <?php
 
+require dirname(__FILE__) . '/../example.php';
+
 class Hoge {
     public function execute($pdo){
         $dao = Hermit::create($pdo);
