@@ -3,5 +3,5 @@
 /**
  * @author nowelium
  */
-interface HermitDao {
+interface HermitTx {
 }

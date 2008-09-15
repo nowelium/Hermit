@@ -3,33 +3,40 @@
 /**
  * @author nowelium
  */
-abstract class Hermit {
-    public static $classMap = array();
-    public static function bind($targetClass, $dao){
-        self::$classMap[$targetClass] = $dao;
+class Hermit {
+    protected $listeners = array();
+    protected $delegaters = array();
+
+    public function __construct($class){
+        $this->proxy = self::__create($class);
     }
-    public static function create(PDO $pdo, $class = null){
-        if(is_null($class)){
-            $e = new Exception;
-            $trace = $e->getTrace();
-            return Hermit::create($pdo, $trace[1]['class']);
+    public function __call($name, $parameters = array()){
+        if(isset($this->delegater[$name])){
+            return self::__request($this->delegater[$name], $name, $parameters);
         }
+        return self::__request($this->proxy, $name, $parameters);
+    }
+    protected static function __request(Hermit $hermit, $name, array $params){
+        return $hermit->request($name, $params);
+    }
+    protected static function __create($class){
         if(is_object($class)){
-            return HermitClassProxy::delegate($pdo, new ReflectionObject($class), $class);
+            return HermitObjectProxy::delegate(new ReflectionObject($class), $class);
         }
         if(isset(Hermit::$classMap[$class])){
-            return self::createProxy($pdo, Hermit::$classMap[$class]);
+            return self::__createProxy(Hermit::$classMap[$class]);
         }
         if(class_exists($class)){
-            return self::create($pdo, $class);
+            return self::__createProxy($class);
         }
-        throw new InvalidArgumentException('nosuch class: ' . $class);
+        throw new RuntimeException('Hermit does not create: ' . $class);
     }
-    protected static function createProxy(PDO $pdo, $targetClass){
+    protected static function __createProxy($targetClass){
         $reflector = new ReflectionClass($targetClass);
         if($reflector->isInterface()){
-            return HermitInterfaceProxy::delegate($pdo, $reflector);
+            return HermitInterfaceProxy::delegate($reflector);
         }
-        return HermitFutureProxy::delegate($pdo, $reflector, $targetClass);
+        return HermitClassProxy::delegate($reflector);
     }
 }
+

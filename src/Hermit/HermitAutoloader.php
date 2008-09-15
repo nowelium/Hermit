@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @author nowelium
+ */
 class HermitAutoloader {
     private static $classPath = array(
         '/',
@@ -8,7 +11,11 @@ class HermitAutoloader {
         '/proxy',
         '/meta',
         '/creator',
-        '/command'
+        '/command',
+        '/statement',
+        '/resultset',
+        '/responder',
+        '/tx'
     );
     private static $userClassPath = array();
     private static $unmatch = array();
