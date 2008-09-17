@@ -11,7 +11,7 @@ class HermitSelectCommand implements HermitCommand {
         $this->sqlCreator = $sqlCreator;
     }
     public function execute(PDO $pdo, array $parameters){
-        $sql = $this->sqlCreator->createSql();
+        $sql = $this->sqlCreator->createSql($pdo);
         $stmt = HermitStatementBuilder::prepare($pdo, $this->method, $sql);
         $stmt->execute($parameters);
         return HermitResultSet::create($stmt, $this->method);

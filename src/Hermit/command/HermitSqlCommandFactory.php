@@ -11,10 +11,10 @@ class HermitSqlCommandFactory {
         $this->annote = HermitAnnote::create($reflector);
         $this->reflector = $reflector;
     }
-    public function hasCommand($methodName){
+    public function has($methodName){
         return $this->annote->hasMethod($methodName);
     }
-    public function getCommand($methodName){
+    public function create(PDO $pdo, $methodName){
         $method = $this->annote->getMethod($methodName);
         $methodId = spl_object_hash($method);
         if(isset($this->createdCommands[$methodId])){
@@ -24,6 +24,10 @@ class HermitSqlCommandFactory {
         return $this->createdCommands[$methodId] = $command;
     }
     protected function createCommand(ReflectionMethod $method){
+        $methodName = $method->getName();
+        if($this->annote->isProcedureMethod($methodName)){
+            return $this->createProcedureCommand($method);
+        }
         if($this->annote->isInsertMethod($methodName)){
             return $this->createInsertCommand($method);
         }
@@ -35,27 +39,52 @@ class HermitSqlCommandFactory {
         }
         return $this->createSelectCommand($method);
     }
+    protected function createProcedureCommand(ReflectionMethod $method){
+        $creator = $this->createProcedureSqlCreator($method);
+        return new HermitProcedureCommand($method, $creator);
+    }
+    protected function createProcedureSqlCreator(ReflectionMethod $method){
+        $sql = $this->annote->getProcedure($method);
+        if(null !== $sql){
+            return new HermitStaticSqlCreator($sql);
+        }
+        $sql = $this->annote->getSql($method);
+        if(null !== $sql){
+            return new HermitStaticSqlCreator($sql);
+        }
+        $sql = $this->annote->getFile($method);
+        if(null !== $sql){
+            return new HermitStaticSqlCreator($sql);
+        }
+        throw new BadMethodCallException('method: "' . $method->getName() . '" was not apply to Procedure command');
+    }
     protected function createInsertCommand(ReflectionMethod $method){
+        throw new RuntimeException('T.B.D');
     }
     protected function createUpdateCommand(ReflectionMethod $method){
+        throw new RuntimeException('T.B.D');
+    }
+    protected function createDeleteCommand(ReflectionMethod $method){
+        throw new RuntimeException('T.B.D');
     }
     protected function createSelectCommand(ReflectionMethod $method){
-        $creator = $this->createSelectSqlCreator($method->getName());
+        $creator = $this->createSelectSqlCreator($method);
+        $query = $this->annote->getQuery($method);
+        if(null !== $query){
+            $creator->addQuery($query);
+        }
         return new HermitSelectCommand($method, $creator);
     }
-    protected function createSelectSqlCreator($name){
-        switch(true){
-        case $this->annote->hasSql($name):
-            return new HermitStaticSqlCreator($this->annote->getSql($name));
-        case $this->annote->hasFile($name):
-            return new HermitStaticSqlCreator($this->annote->getFile($name));
-        case $this->annote->hasPath($name):
-            return new HermitStaticSqlCreator($this->annote->getPath($name));
-        case $this->annote->hasQuery($name):
-            $creator = new HermitAutoSelectCreator;
-            $creator->addQuery($this->annote->getQuery());
-            return $creator;
+    protected function createSelectSqlCreator(ReflectionMethod $method){
+        $sql = $this->annote->getSql($method);
+        if(null !== $sql){
+            return new HermitStaticSqlCreator($sql);
         }
-        throw new BadMethodCallException('invalid method:' . $name);
+        $sql = $this->annote->getFile($method);
+        if(null !== $sql){
+            return new HermitStaticSqlCreator($sql);
+        }
+        return new HermitAutoSelectCreator;
     }
 }
+

@@ -3,7 +3,7 @@
 /**
  * @author nowelium
  */
-class HermitStatementBuilder {
+abstract class HermitStatementBuilder {
     const REGEX = '/(\/\*(\w+)\*\/)((\'|")(\w+)(\'|"))/m';
     public static function prepare(PDO $pdo, ReflectionMethod $method, $sql){
         $parameterType = self::createParameterType($method);

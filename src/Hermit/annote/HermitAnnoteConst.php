@@ -9,15 +9,29 @@ class HermitAnnoteConst extends HermitAnnote {
     const SQL_SUFFIX = '_SQL';
     const QUERY_SUFFIX = '_QUERY';
     const FILE_SUFFIX = '_FILE';
-    const PATH_SUFFIX = '_PATH';
+    const PROCEDURE_SUFFIX = '_PROCEDURE';
     const DELEGATE_SUFFIX = '_DELEGATE';
 
+    const UNDERSCORE = '_';
+    const SQL_FILE_EXTENSION = '.sql';
+
+    const PROCEDURE_NAMES = '/^(proc|call)/i';
+    const INSERT_NAMES = '/^(insert|create|add)/i';
+    const UPDATE_NAMES = '/^(update|modify|store)/i';
+    const DELETE_NAMES = '/^(delete|remove)/i';
+
     protected $reflector;
-    protected function __construct(ReflectionClass $reflector){
+    public function __construct(ReflectionClass $reflector){
         $this->reflector = $reflector;
     }
-    protected static function createFilePath($pathOfClass, $suffix){
-        return dirname($pathOfClass) . '_' . $suffix . '.sql';
+    protected static function underscore(){
+        $args = func_get_args();
+        $buf = '';
+        foreach($args as $arg){
+            $buf .= $arg;
+            $buf .= self::UNDERSCORE;
+        }
+        return substr($buf, 0, -1);
     }
     public function getTable(){
         return $this->reflector->getConstant(self::TABLE_KEY);
@@ -38,41 +52,71 @@ class HermitAnnoteConst extends HermitAnnote {
     public function getMethod($name){
         return $this->reflector->getMethod($name);
     }
-    public function hasSql($name){
-        return $this->reflector->hasConstant($name . self::SQL_SUFFIX);
+    public function isProcedureMethod(ReflectionMethod $method){
+        return 1 === preg_match(self::PROCEDURE_NAMES, $method->getName());
     }
-    public function getSql($name, $instance = null){
-        return $this->reflector->getConstant($name . self::SQL_SUFFIX);
+    public function isInsertMethod(ReflectionMethod $method){
+        return 1 === preg_match(self::INSERT_NAMES, $method->getName());
     }
-    public function hasQuery($name){
-        return $this->reflector->hasConstant($name . self::QUERY_SUFFIX);
+    public function isUpdateMethod(ReflectionMethod $method){
+        return 1 === preg_match(self::UPDATE_NAMES, $method->getName());
     }
-    public function getQuery($name, $instance = null){
-        return $this->reflector->getConstant($name . self::QUERY_SUFFIX);
+    public function isDeleteMethod(ReflectionMethod $method){
+        return 1 === preg_match(self::DELETE_NAMES, $method->getName());
     }
-    public function hasFile($name){
-        if(!$this->reflector->hasConstant($name . self::FILE_SUFFIX)){
-            return false;
+    public function getProcedure(ReflectionMethod $method){
+        $key = $method->getName . self::PROCEDURE_SUFFIX;
+        if($this->reflector->hasConstant($key)){
+            return $this->reflector->getConstant($key);
         }
-        return file_exists(self::createFilePath($this->reflector->getFileName(), $name));
+        return null;
     }
-    public function getFile($name, $instance = null){
-        $path = self::createFilePath($this->reflector->getFileName(), $name);
-        return file_get_contents($path);
-    }
-    public function hasPath($name){
-        if(!$this->reflector->hasConstant($name . self::PATH_SUFFIX)){
-            return false;
+    public function getSql(ReflectionMethod $method, $suffix = null){
+        if(is_null($suffix)){
+            $suffix = '';
         }
-        return file_exists($this->getPath($name));
+        $methodName = $method->getName();
+        $key1 = $methodName . self::UNDERSCORE . $suffix . self::SQL_SUFFIX;
+        if($this->reflector->hasConstant($key1)){
+            return $this->reflector->getConstant($key1);
+        }
+        $key2 = $methodName . self::SQL_SUFFIX;
+        if($this->reflector->hasConstant($key2)){
+            return $this->reflector->getConstant($key2);
+        }
+
+        $fileName = $this->reflector->getFileName();
+        $className = $this->reflector->getName();
+        $dirPath = dirname($fileName) . DIRECTORY_SEPARATOR;
+        $key3 = $dirPath . self::underscore($className, $methodName, $suffix) . self::SQL_FILE_EXTENSION;
+        if(file_exists($key3)){
+            return file_get_contents($key3);
+        }
+        $key4 = $dirPath . self::underscore($className, $methodName) . self::SQL_FILE_EXTENSION;
+        if(file_exists($key4)){
+            return file_get_contents($key4);
+        }
+        return null;
     }
-    public function getPath($name, $instance = null){
-        return file_get_contents($this->reflector->getConstant($name . self::PATH_SUFFIX));
+    public function getQuery(ReflectionMethod $method){
+        $key = $method->getName() . self::QUERY_SUFFIX;
+        if($this->reflector->hasConstant($key)){
+            return $this->reflector->getConstant($key);
+        }
+        return null;
     }
-    public function hasDelegate($name){
-        return $this->reflector->hasConstant($name . self::DELEGATE_SUFFIX);
+    public function getFile(ReflectionMethod $method){
+        $key = $method->getName() . self::FILE_SUFFIX;
+        if($this->reflector->hasConstant($key)){
+            $path = $this->reflector->getConstant($key);
+            if(file_exists($path)){
+                return file_get_contents($path);
+            }
+        }
+        return null;
     }
-    public function getDelegate($name, $instance = null){
+    public function getDelegate(ReflectionMethod $method){
         return $this->reflector->getConstant($name . self::DELEGATE_SUFFIX);
     }
 }
+

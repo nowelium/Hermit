@@ -6,7 +6,6 @@
 class Hermit {
     protected $listeners = array();
     protected $delegaters = array();
-
     public function __construct($class){
         $this->proxy = self::__create($class);
     }

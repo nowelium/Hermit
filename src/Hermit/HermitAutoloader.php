@@ -3,7 +3,7 @@
 /**
  * @author nowelium
  */
-class HermitAutoloader {
+abstract class HermitAutoloader {
     private static $classPath = array(
         '/',
         '/annote',

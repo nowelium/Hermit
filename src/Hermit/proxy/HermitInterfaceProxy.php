@@ -14,10 +14,11 @@ class HermitInterfaceProxy implements HermitFutureProxy {
         return new self($reflector);
     }
     public function request($name, array $params){
-        if(!$this->commandFactory->hasCommand($name)){
+        if(!$this->commandFactory->has($name)){
             throw new BadMethodCallException($this->reflector->getName() . '::' . $name);
         }
-        $command = $this->commandFactory->getCommand($name);
+        $pdo = HermitDataSourceManager::get($this->reflector->getName());
+        $command = $this->commandFactory->create($pdo, $name);
         return $command->execute($pdo, $params);
     }
 }

@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @author nowelium
+ */
 interface HermitSqlCreator {
-    public function createSql();
+    public function createSql(PDO $pdo);
 }
