@@ -1,6 +1,6 @@
 <?php
 
-abstract class HarmitDaoManager {
+abstract class HermitDaoManager {
     private static $daoClasses = array();
     private function __construct(){
         // nop
@@ -9,7 +9,7 @@ abstract class HarmitDaoManager {
         self::$daoClasses[$targetClass] = $assignedClass;
     }
     public static function get($targetClass){
-        return self::$daoClasses[$targetClass]);
+        return self::$daoClasses[$targetClass];
     }
     public static function has($targetClass){
         return isset(self::$daoClasses[$targetClass]);

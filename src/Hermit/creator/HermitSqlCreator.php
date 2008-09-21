@@ -4,5 +4,6 @@
  * @author nowelium
  */
 interface HermitSqlCreator {
-    public function createSql(PDO $pdo);
+    public function initialize(PDO $pdo, ReflectionMethod $method, HermitAnnote $annote);
+    public function createSql();
 }

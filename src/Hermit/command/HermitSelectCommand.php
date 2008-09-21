@@ -3,7 +3,7 @@
 /**
  * @author nowelium
  */
-class HermitSelectCommand implements HermitCommand {
+class HermitSelectCommand implements HermitSqlCommand {
     private $method;
     private $sqlCreator;
     public function __construct(ReflectionMethod $method, HermitSqlCreator $sqlCreator){

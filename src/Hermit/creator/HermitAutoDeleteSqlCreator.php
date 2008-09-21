@@ -3,7 +3,7 @@
 /**
  * @author nowelium
  */
-class HermitAutoInsertSqlCreator implements HermitSqlCreator {
+class HermitAutoDeleteSqlCreator implements HermitSqlCreator {
     public function initialize(PDO $pdo, ReflectionMethod $method, HermitAnnote $annote){
     }
     public function createSql(){

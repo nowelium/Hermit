@@ -12,6 +12,9 @@ abstract class HermitDataSourceManager {
         self::$datasources[$targetClass] = $pdo;
     }
     public static function get($targetClass){
+        if(!self::has($targetClass)){
+            return self::$default;
+        }
         return self::$datasources[$targetClass];
     }
     public static function has($targetClass){
