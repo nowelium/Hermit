@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @auhtor nowelium
+ */
 abstract class HermitDaoManager {
     private static $daoClasses = array();
     private function __construct(){

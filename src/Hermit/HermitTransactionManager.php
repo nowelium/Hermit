@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @author nowelium
+ */
 abstract class HermitTransactionManager {
     private static $transactionScripts = array();
     private function __construct(){

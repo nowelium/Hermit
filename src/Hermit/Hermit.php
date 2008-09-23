@@ -5,7 +5,7 @@
  */
 class Hermit {
     protected $listeners = array();
-    protected $delegaters = array();
+    protected $delegators = array();
     public function __construct($class = null){
         if(is_null($class)){
             $e = new Exception;
@@ -15,13 +15,22 @@ class Hermit {
         $this->proxy = self::__create($class);
     }
     public function __call($name, $parameters = array()){
-        if(isset($this->delegater[$name])){
-            return self::__request($this->delegater[$name], $name, $parameters);
+        if(isset($this->delegators[$name])){
+            $delegator = $this->delegators[$name];
+            return self::__request($delegator, $name, $parameters);
+        }
+        if(isset($this->listeners[$name])){
+            $response = self::__request($this->proxy, $name, $parameters);
+            $listeners = $this->listeners[$name];
+            foreach($listeners as $listener){
+                self::__request($listener, $name, array($response));
+            }
+            return $response;
         }
         return self::__request($this->proxy, $name, $parameters);
     }
-    protected static function __request(HermitProxy $hermit, $name, array $params){
-        return $hermit->request($name, $params);
+    protected static function __request(HermitProxy $proxy, $name, array $params){
+        return $proxy->request($name, $params);
     }
     protected static function __create($targetClass){
         if(is_object($targetClass)){

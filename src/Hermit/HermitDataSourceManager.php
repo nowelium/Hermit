@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @author nowelium
+ */
 abstract class HermitDataSourceManager {
     private static $default;
     private static $datasources = array();
