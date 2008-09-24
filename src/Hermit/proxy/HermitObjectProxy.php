@@ -4,22 +4,22 @@
  * @author nowelium
  */
 class HermitObjectProxy implements HermitFutureProxy {
-    protected $pdo;
     protected $target;
     protected $annote;
-    protected function __construct(PDO $pdo, ReflectionClass $reflector, $target){
-        $this->pdo = $pdo;
+    protected function __construct(ReflectionClass $reflector, $target){
         $this->target = $target;
         $this->annote = HermitAnnote::create($reflector);
     }
-    public static function delegate(PDO $pdo, ReflectionClass $reflector, $instance = null){
-        return new self($pdo, $reflector, $instance);
+    public static function delegate(ReflectionClass $reflector, $instance = null){
+        return new self($reflector, $instance);
     }
     public function request($name, array $params){
-        if($this->annote->hasMethod($name, true)){
+        if($this->annote->hasMethod($name)){
             $method = $this->annote->getMethod($name);
             return $method->invokeArgs($this->target, $params);
         }
-        throw new BadMethodCallException(get_class($this->target) . '::' . $name);
+        $pdo = HermitDataSourceManager::get($this->reflector->getName());
+        $command = $this->commandFactory->create($pdo, $name);
+        return $command->execute($pdo, $params);
     }
 }

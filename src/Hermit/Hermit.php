@@ -11,6 +11,8 @@ class Hermit {
             $e = new Exception;
             $trace = $e->getTrace();
             $class = HermitDaoManager::get($trace[1]['class']);
+        } else if(HermitDaoManager::has($class)){
+          $class = HermitDaoManager::get($class);
         }
         $this->proxy = self::__create($class);
     }
@@ -34,7 +36,7 @@ class Hermit {
     }
     protected static function __create($targetClass){
         if(is_object($targetClass)){
-            return HermitObjectProxy::delegate(new ReflectionObject($targetClas), $targetClass);
+            return HermitObjectProxy::delegate(new ReflectionObject($targetClass), $targetClass);
         }
         $reflector = new ReflectionClass($targetClass);
         if($reflector->isInterface()){
