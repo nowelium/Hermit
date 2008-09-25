@@ -15,7 +15,8 @@ abstract class HermitAutoloader {
         '/statement',
         '/resultset',
         '/responder',
-        '/tx'
+        '/tx',
+        '/valuetype'
     );
     private static $userClassPath = array();
     private static $unmatch = array();

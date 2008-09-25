@@ -4,7 +4,7 @@
  * @author nowelium
  */
 abstract class HermitStatementBuilder {
-    const REGEX = '/(\/\*(\w+)\*\/)((\'|")(\w+)(\'|"))/m';
+    const REGEX = '/(\/\*(\w+)\*\/)((\'|")(\w+)(\'|"))?/m';
     public static function prepare(PDO $pdo, ReflectionMethod $method, $sql){
         $parameterType = self::createParameterType($method);
         $sql = preg_replace_callback(self::REGEX, array($parameterType, 'match'), $sql);
@@ -12,11 +12,11 @@ abstract class HermitStatementBuilder {
     }
     protected static function createParameterType(ReflectionMethod $method){
         $numOfParams = $method->getNumberOfParameters();
-        if($numOfParams < 1){
+        if(0 === $numOfParams){
             return new HermitSqlParameterNull;
         }
         $params = $method->getParameters();
-        if($numOfParams == 1){
+        if(1 === $numOfParams){
             return self::createParameterTypeWithIndex($params[0], 0);
         }
         $parameter = new HermitSqlParameterMixed;
@@ -42,3 +42,4 @@ abstract class HermitStatementBuilder {
         return $parameter;
     }
 }
+

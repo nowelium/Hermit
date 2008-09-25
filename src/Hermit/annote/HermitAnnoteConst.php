@@ -11,6 +11,7 @@ class HermitAnnoteConst extends HermitAnnote {
     const FILE_SUFFIX = '_FILE';
     const PROCEDURE_SUFFIX = '_PROCEDURE';
     const DELEGATE_SUFFIX = '_DELEGATE';
+    const VALUE_TYPE_SUFFIX = '_VALUE_TYPE';
 
     const UNDERSCORE = '_';
     const SQL_FILE_EXTENSION = '.sql';
@@ -117,6 +118,13 @@ class HermitAnnoteConst extends HermitAnnote {
     }
     public function getDelegate(ReflectionMethod $method){
         return $this->reflector->getConstant($name . self::DELEGATE_SUFFIX);
+    }
+    public function getValueType(ReflectionMethod $method){
+        $key = $method->getName() . self::VALUE_TYPE_SUFFIX;
+        if($this->reflector->hasConstant($key)){
+            return $this->reflector->getConstant($key);
+        }
+        return null;
     }
 }
 
