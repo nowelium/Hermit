@@ -4,7 +4,7 @@
  * @author nowelium
  */
 abstract class HermitStatementBuilder {
-    const REGEX = '/(\/\*(\w+)\*\/)((\'|")(\w+)(\'|"))?/m';
+    const REGEX = '/(\/\*([^\*\/]*)\*\/)(\w+|((\'|")([^(\'|")]*)(\'|")))?/m';
     public static function prepare(PDO $pdo, ReflectionMethod $method, $sql){
         $parameterType = self::createParameterType($method);
         $sql = preg_replace_callback(self::REGEX, array($parameterType, 'match'), $sql);
@@ -42,4 +42,3 @@ abstract class HermitStatementBuilder {
         return $parameter;
     }
 }
-
