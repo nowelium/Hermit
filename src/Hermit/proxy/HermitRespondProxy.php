@@ -11,6 +11,6 @@ class HermitRespondProxy implements HermitProxy {
         $this->methodName = $methodName;
     }
     public function request($name, array $response){
-        return call_user_func_array(array($this->target, $this->methodName), array($response));
+        return call_user_func_array(array($this->target, $this->methodName), $response);
     }
 }

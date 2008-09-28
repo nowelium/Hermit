@@ -11,6 +11,6 @@ class HermitDelegateProxy implements HermitProxy {
         $this->methodName = $methodName;
     }
     public function request($name, array $parameters){
-        return call_user_func_array(array($this->target, $this->methodName), array($parameters));
+        return call_user_func_array(array($this->target, $this->methodName), $parameters);
     }
 }
