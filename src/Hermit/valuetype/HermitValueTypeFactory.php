@@ -4,18 +4,18 @@
  * @author nowelium
  */
 abstract class HermitValueTypeFactory {
-    protected static $types = array(
-        'array' => 'HermitArrayValueType',
-        'obj' => 'HermitObjectValueType'
+    protected static $valueTypes = array(
+        'HermitArrayValueType',
+        'HermitObjectValueType'
     );
-    public static function create($value){
-        if(null === $value){
-            return new HermitNopValueType;
+    public static function create(HermitAnnote $annote, ReflectionMethod $method){
+        $value = $annote->getValueType($method);
+        foreach(self::$valueTypes as $type){
+            if(call_user_func(array($type, 'accept'), $value)){
+                return new $type($annote, $method, $value);
+            }
         }
-        if(!isset(self::$types[$value])){
-            return new HermitNopValueType;
-        }
-        return new self::$types[$value];
+        return new HermitNopValueType;
     }
 }
 

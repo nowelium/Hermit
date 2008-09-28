@@ -18,7 +18,6 @@ abstract class HermitAnnote {
     public abstract function getSql(ReflectionMethod $method, $suffix = null);
     public abstract function getFile(ReflectionMethod $method);
     public abstract function getQuery(ReflectionMethod $method);
-    public abstract function getDelegate(ReflectionMethod $method);
     public abstract function getValueType(ReflectionMethod $method);
     public static final function create(ReflectionClass $reflector){
         return new HermitAnnoteConst($reflector);

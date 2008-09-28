@@ -78,7 +78,7 @@ class HermitSqlCommandFactory {
         if($creator instanceof HermitAppendableSqlCreator){
             $this->appendSql($method, $creator);
         }
-        $valueType = HermitValueTypeFactory::create($this->annote->getValueType($method));
+        $valueType = HermitValueTypeFactory::create($this->annote, $method);
         return new HermitSelectCommand($method, $creator, $valueType);
     }
     protected function createSelectSqlCreator(ReflectionMethod $method, $dbName){

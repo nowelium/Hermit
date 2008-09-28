@@ -3,7 +3,10 @@
 /**
  * @author nowelium
  */
-class HermitNopValueType implements HermitValueType {
+class HermitNopValueType extends AbstractHermitValueType {
+    public static function accept($value){
+        return true;
+    }
     public function apply(HermitStatement $stmt){
         // nop
     }

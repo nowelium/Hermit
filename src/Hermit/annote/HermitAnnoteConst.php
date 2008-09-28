@@ -116,9 +116,6 @@ class HermitAnnoteConst extends HermitAnnote {
         }
         return null;
     }
-    public function getDelegate(ReflectionMethod $method){
-        return $this->reflector->getConstant($name . self::DELEGATE_SUFFIX);
-    }
     public function getValueType(ReflectionMethod $method){
         $key = $method->getName() . self::VALUE_TYPE_SUFFIX;
         if($this->reflector->hasConstant($key)){
