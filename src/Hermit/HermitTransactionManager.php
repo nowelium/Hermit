@@ -9,12 +9,13 @@ abstract class HermitTransactionManager {
         // nop
     }
     public static function set($targetClass, HermitTx $tx){
-        self::$transactionScripts[$targetClass] = $tx;
     }
     public static function get($targetClass){
-        return self::$transactionScripts[$targetClass];
     }
     public static function has($targetClass){
-        return isset(self::$transactionScripts[$targetClass]);
+    }
+    public static function createProxy(HermitProxy $proxy, $targetClass){
+        $tx = self::get($targetClass);
+        return new HermitCallableProxy($proxy, array($tx, 'proceed'));
     }
 }

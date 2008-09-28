@@ -4,6 +4,7 @@
  * @author nowelium
  */
 class Hermit {
+    protected $proxy;
     protected $listeners = array();
     protected $delegators = array();
     public function __construct($class = null){
@@ -14,7 +15,8 @@ class Hermit {
         } else if(HermitDaoManager::has($class)){
           $class = HermitDaoManager::get($class);
         }
-        $this->proxy = self::__create($class);
+        $proxy = self::__create($class);
+        $this->proxy = self::wrap($proxy, $class);
     }
     public function __call($name, $parameters = array()){
         if(isset($this->delegators[$name])){
@@ -43,6 +45,12 @@ class Hermit {
             return HermitInterfaceProxy::delegate($reflector);
         }
         return HermitClassProxy::delegate($reflector);
+    }
+    protected static function wrap(HermitProxy $proxy, $targetClass){
+        if(HermitTransactionManager::has($targetClass)){
+            return HermitTransactionManager::createProxy($proxy, $targetClass);
+        }
+        return $proxy;
     }
 }
 

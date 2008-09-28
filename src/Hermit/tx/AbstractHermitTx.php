@@ -5,7 +5,20 @@
  */
 abstract class AbstractHermitTx implements HermitTx {
     private $txRule = array();
-    public function complete(Exception $e){
+    private $connection;
+    public function hasTransaction(){
+    }
+    public function begin(){
+    }
+    public function commit(){
+    }
+    public function rollback(){
+    }
+    public function suspend(){
+    }
+    public function resume(PDO $connection){
+    }
+    public final function complete(Exception $e){
         foreach($this->txRule as $rule){
             try {
                 if($rule->isAssignableFrom($e)){
@@ -18,10 +31,10 @@ abstract class AbstractHermitTx implements HermitTx {
         $this->rollback();
         return false;
     }
-    public function addCommitRule(Exception $e){
+    public final function addCommitRule(Exception $e){
         $this->txRule[] = new HermitTxRule($this, $e, true);
     }
-    public function addRollbackRurle(Exception $e){
+    public final function addRollbackRurle(Exception $e){
         $this->txRule[] = new HermitTxRule($this, $e, false);
     }
 }
