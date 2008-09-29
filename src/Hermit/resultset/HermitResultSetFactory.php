@@ -17,4 +17,3 @@ abstract class HermitResultSetFactory {
         return new HermitDefaultResultSet;
     }
 }
-

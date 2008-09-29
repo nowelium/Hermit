@@ -11,4 +11,3 @@ class HermitNopValueType extends AbstractHermitValueType {
         // nop
     }
 }
-

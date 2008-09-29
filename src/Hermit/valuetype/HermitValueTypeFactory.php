@@ -18,4 +18,3 @@ abstract class HermitValueTypeFactory {
         return new HermitNopValueType;
     }
 }
-

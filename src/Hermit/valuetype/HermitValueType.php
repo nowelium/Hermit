@@ -8,4 +8,3 @@ interface HermitValueType {
     public static function accept($value);
     public function apply(HermitStatement $stmt);
 }
-

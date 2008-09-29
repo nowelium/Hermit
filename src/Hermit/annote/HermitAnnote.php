@@ -38,4 +38,3 @@ abstract class HermitAnnote {
         return true;
     }
 }
-

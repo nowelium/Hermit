@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @author nowelium
+ */
 class HermitSqliteDatabaseMeta implements HermitDatabaseMeta {
     const TABLE_META_SQL = 'SELECT * FROM %s LIMIT 1';
     const TABLE_INFO_SQL = 'PRAGMA table_info(%s)';
@@ -14,7 +17,7 @@ class HermitSqliteDatabaseMeta implements HermitDatabaseMeta {
         }
 
         $columnMeta = $this->getColumnMetas($table);
-        $sql = sprintf(self::TABLE_INFO_SQL, $table);   
+        $sql = sprintf(self::TABLE_INFO_SQL, $table);
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);

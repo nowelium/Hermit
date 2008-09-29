@@ -20,4 +20,3 @@ class HermitSelectCommand implements HermitSqlCommand {
         return $resultset->execute($stmt, $this->type);
     }
 }
-

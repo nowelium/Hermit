@@ -12,4 +12,3 @@ class HermitObjectValueType extends AbstractHermitValueType {
         $stmt->setFetchMode(PDO::FETCH_OBJ);
     }
 }
-

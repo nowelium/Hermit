@@ -9,4 +9,3 @@ class HermitDefaultResultSet implements HermitResultSet {
         return $stmt->fetch();
     }
 }
-

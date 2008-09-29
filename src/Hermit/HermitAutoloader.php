@@ -55,4 +55,3 @@ abstract class HermitAutoloader {
 }
 
 HermitAutoloader::initialize();
-

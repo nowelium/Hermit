@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @author nowelium
+ */
 class HermitMySQLDatabaseMeta implements HermitDatabaseMeta {
     const TABLE_INFO_SQL = 'SELECT * FROM :TABLE LIMIT 0';
     private $tables = array();

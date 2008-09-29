@@ -14,4 +14,3 @@ class HermitCallableProxy implements HermitProxy {
         return call_user_func($this->call, $this->proxy, $name, $parameters);
     }
 }
-

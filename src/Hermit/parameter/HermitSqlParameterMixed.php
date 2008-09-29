@@ -24,4 +24,3 @@ class HermitSqlParameterMixed extends HermitSqlParameter {
         }
     }
 }
-

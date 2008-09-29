@@ -7,6 +7,7 @@ class Hermit {
     protected $proxy;
     protected $listeners = array();
     protected $delegators = array();
+    protected static $wrappers = array();
     public function __construct($class = null){
         if(is_null($class)){
             $e = new Exception;
@@ -53,4 +54,3 @@ class Hermit {
         return $proxy;
     }
 }
-

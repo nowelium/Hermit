@@ -15,4 +15,3 @@ class HermitListResultSet implements HermitResultSet {
         return $results;
     }
 }
-

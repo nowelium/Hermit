@@ -124,4 +124,3 @@ class HermitAnnoteConst extends HermitAnnote {
         return null;
     }
 }
-

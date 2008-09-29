@@ -12,7 +12,10 @@ abstract class HermitDaoManager {
         self::$daoClasses[$targetClass] = $assignedClass;
     }
     public static function get($targetClass){
-        return self::$daoClasses[$targetClass];
+        if(isset(self::$daoClasses[$targetClass])){
+            return self::$daoClasses[$targetClass];
+        }
+        return null;
     }
     public static function has($targetClass){
         return isset(self::$daoClasses[$targetClass]);
