@@ -6,6 +6,7 @@ DROP PROCEDURE IF EXISTS PROC_IN_IN_MULTIRESULT;
 DROP PROCEDURE IF EXISTS PROC_IN_OUT_MULTIRESULT;
 DROP PROCEDURE IF EXISTS PROC_INOUT_MULTIRESULT;
 DROP PROCEDURE IF EXISTS PROC_OUT_MULTIRESULT;
+DROP PROCEDURE IF EXISTS PROC_NOSPEC_PARAM;
 
 delimiter /
 
@@ -60,5 +61,13 @@ CREATE PROCEDURE PROC_OUT_MULTIRESULT(OUT param VARCHAR(50))
 begin
   select * from EMP into param;
   select * from EMP;
+end;
+/
+
+CREATE PROCEDURE PROC_NOSPEC_PARAM(param_1 INTEGER, param_2 INTEGER, param_3 INTEGER)
+begin
+  select * from EMP where empno = param_1;
+  select * from EMP where empno = param_2;
+  select * from EMP where empno = param_3;
 end;
 /

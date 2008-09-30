@@ -44,7 +44,8 @@ class HermitSqlCommandFactory {
         $dbName = HermitDatabaseMetaFactory::getDatabaseName($pdo);
         $creator = $this->createProcedureSqlCreator($method, $dbName);
         $creator->initialize($pdo, $method, $this->annote);
-        return new HermitProcedureCommand($method, $creator);
+        $valueType = HermitValueTypeFactory::create($this->annote, $method);
+        return new HermitProcedureCommand($method, $creator, $valueType);
     }
     protected function createProcedureSqlCreator(ReflectionMethod $method, $dbName){
         $sql = $this->annote->getProcedure($method);

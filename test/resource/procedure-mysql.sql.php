@@ -35,6 +35,10 @@ $sql = <<<__SQL__
 DROP PROCEDURE IF EXISTS PROC_OUT_MULTIRESULT;
 __SQL__;
 $pdo->exec($sql);
+$sql = <<<__SQL__
+DROP PROCEDURE IF EXISTS PROC_NOSPEC_PARAM;
+__SQL__;
+$pdo->exec($sql);
 
 //$sql = <<< __SQL__
 //__SQL__;
@@ -120,6 +124,18 @@ CREATE PROCEDURE PROC_OUT_MULTIRESULT(OUT param VARCHAR(50))
 begin
   select * from EMP into param;
   select * from EMP;
+end;
+/
+__SQL__;
+$stmt = $pdo->query($sql);
+$stmt->closeCursor();
+
+$sql = <<<__SQL__
+CREATE PROCEDURE PROC_NOSPEC_PARAM(param_1 INTEGER, param_2 INTEGER, param_3 INTEGER)
+begin
+  select * from EMP where empno = param_1;
+  select * from EMP where empno = param_2;
+  select * from EMP where empno = param_3;
 end;
 /
 __SQL__;
