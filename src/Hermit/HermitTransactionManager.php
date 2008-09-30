@@ -3,18 +3,37 @@
 /**
  * @author nowelium
  */
-abstract class HermitTransactionManager {
-    private static $transactionScripts = array();
+class HermitTransactionManager implements HermitBehaviorWrapper {
+    private static $instance;
+    private $transactionScripts = array();
     private function __construct(){
         // nop
     }
-    public static function set($targetClass, HermitTx $tx){
+    protected static function getInstance(){
+        if(null === self::$instance){
+            self::$instance = new self;
+        }
+        if(!HermitRegister::hasBehavior(__CLASS__)){
+            HermitRegister::putBehavior(__CLASS__, self::$instance);
+        }
+        return self::$instance;
     }
-    public static function get($targetClass){
+    public function set($targetClass, HermitTx $tx){
+        $instance = self::getInstance();
+        $instance->transactionScripts[$targetClass] = $tx;
     }
-    public static function has($targetClass){
+    public function get($targetClass){
+        $instance = self::getInstance();
+        if(isset($instance->transactionScripts[$targetClass])){
+            return null;
+        }
+        return $instance->transactionScripts[$targetClass];
     }
-    public static function createProxy(HermitProxy $proxy, $targetClass){
+    public function has($targetClass){
+        $instance = self::getInstance();
+        return isset($instance->transactionScripts[$targetClass]);
+    }
+    public function createProxy(HermitProxy $proxy, $targetClass){
         $tx = self::get($targetClass);
         return new HermitCallableProxy($proxy, array($tx, 'proceed'));
     }

@@ -5,9 +5,8 @@
  */
 class Hermit {
     protected $proxy;
-    protected $listeners = array();
-    protected $delegators = array();
-    protected static $wrappers = array();
+    protected $calls = array();
+    protected static $behaviors = array();
     public function __construct($class = null){
         if(is_null($class)){
             $e = new Exception;
@@ -20,17 +19,12 @@ class Hermit {
         $this->proxy = self::wrap($proxy, $class);
     }
     public function __call($name, $parameters = array()){
-        if(isset($this->delegators[$name])){
-            $delegator = $this->delegators[$name];
-            return self::__request($delegator, $name, $parameters);
-        }
-        if(isset($this->listeners[$name])){
-            $response = self::__request($this->proxy, $name, $parameters);
-            $listeners = $this->listeners[$name];
-            foreach($listeners as $listener){
-                self::__request($listener, $name, array($response));
+        if(0 < count($this->calls)){
+            foreach($this->calls as $call){
+                if($call->has($name)){
+                    return $call->execute($this->proxy, $name, $parameters);
+                }
             }
-            return $response;
         }
         return self::__request($this->proxy, $name, $parameters);
     }
@@ -48,8 +42,12 @@ class Hermit {
         return HermitClassProxy::delegate($reflector);
     }
     protected static function wrap(HermitProxy $proxy, $targetClass){
-        if(HermitTransactionManager::has($targetClass)){
-            return HermitTransactionManager::createProxy($proxy, $targetClass);
+        if(0 < count(self::$behaviors)){
+            foreach(self::$behaviors as $behavior){
+                if($behavior->has($targetClass)){
+                    return $behavior->createProxy($proxy, $targetClass);
+                }
+            }
         }
         return $proxy;
     }

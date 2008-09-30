@@ -17,13 +17,12 @@ class HermitSqlCommandFactory {
         return $this->annote->hasMethod($methodName);
     }
     public function create(PDO $pdo, $methodName){
-        $method = $this->annote->getMethod($methodName);
-        $methodId = spl_object_hash($method);
-        if(isset($this->createdCommands[$methodId])){
-            return $this->createdCommands[$methodId];
+        if(isset($this->createdCommands[$methodName])){
+            return $this->createdCommands[$methodName];
         }
+        $method = $this->annote->getMethod($methodName);
         $command = $this->createCommand($pdo, $method);
-        return $this->createdCommands[$methodId] = $command;
+        return $this->createdCommands[$methodName] = $command;
     }
     protected function createCommand(PDO $pdo, ReflectionMethod $method){
         $methodName = $method->getName();
