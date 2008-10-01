@@ -66,7 +66,7 @@ class HermitAnnoteConst extends HermitAnnote {
         return 1 === preg_match(self::DELETE_NAMES, $method->getName());
     }
     public function getProcedure(ReflectionMethod $method){
-        $key = $method->getName . self::PROCEDURE_SUFFIX;
+        $key = $method->getName() . self::PROCEDURE_SUFFIX;
         if($this->reflector->hasConstant($key)){
             return $this->reflector->getConstant($key);
         }

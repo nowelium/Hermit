@@ -41,24 +41,30 @@ class HermitSqlCommandFactory {
         return $this->createSelectCommand($pdo, $method);
     }
     protected function createProcedureCommand(PDO $pdo, ReflectionMethod $method){
-        $dbName = HermitDatabaseMetaFactory::getDatabaseName($pdo);
-        $creator = $this->createProcedureSqlCreator($method, $dbName);
+        $dbms = HermitDatabaseMetaFactory::getDbms($pdo);
+        $creator = $this->createProcedureSqlCreator($method, $dbms);
         $creator->initialize($pdo, $method, $this->annote);
         $valueType = HermitValueTypeFactory::create($this->annote, $method);
-        return new HermitProcedureCommand($method, $creator, $valueType);
+
+        $command = new HermitProcedureCommand;
+        $command->setMethod($method);
+        $command->setSqlCreator($creator);
+        $command->setValueType($valueType);
+        $command->setAnnote($this->annote);
+        return $command;
     }
     protected function createProcedureSqlCreator(ReflectionMethod $method, $dbName){
         $sql = $this->annote->getProcedure($method);
         if(null !== $sql){
-            return new HermitStaticSqlCreator($sql);
+            return new HermitProcedureCallSqlCreator($sql);
         }
         $sql = $this->annote->getSql($method, $dbName);
         if(null !== $sql){
-            return new HermitStaticSqlCreator($sql);
+            return new HermitProcedureCallSqlCreator($sql);
         }
         $sql = $this->annote->getFile($method);
         if(null !== $sql){
-            return new HermitStaticSqlCreator($sql);
+            return new HermitProcedureCallSqlCreator($sql);
         }
         throw new BadMethodCallException('method: "' . $method->getName() . '" was not apply to Procedure command');
     }
@@ -72,8 +78,8 @@ class HermitSqlCommandFactory {
         throw new RuntimeException('T.B.D');
     }
     protected function createSelectCommand(PDO $pdo, ReflectionMethod $method){
-        $dbName = HermitDatabaseMetaFactory::getDatabaseName($pdo);
-        $creator = $this->createSelectSqlCreator($method, $dbName);
+        $dbms = HermitDatabaseMetaFactory::getDbms($pdo);
+        $creator = $this->createSelectSqlCreator($method, $dbms);
         $creator->initialize($pdo, $method, $this->annote);
         if($creator instanceof HermitAppendableSqlCreator){
             $this->appendSql($method, $creator);
@@ -81,12 +87,12 @@ class HermitSqlCommandFactory {
         $valueType = HermitValueTypeFactory::create($this->annote, $method);
         return new HermitSelectCommand($method, $creator, $valueType);
     }
-    protected function createSelectSqlCreator(ReflectionMethod $method, $dbName){
-        $sql = $this->annote->getSql($method, $dbName);
+    protected function createSelectSqlCreator(ReflectionMethod $method, $dbms){
+        $sql = $this->annote->getSql($method, $dbms);
         if(null !== $sql){
             return new HermitStaticSqlCreator($sql);
         }
-        $sql = $this->annote->getFile($method, $dbName);
+        $sql = $this->annote->getFile($method, $dbms);
         if(null !== $sql){
             return new HermitStaticSqlCreator($sql);
         }

@@ -53,6 +53,7 @@ end;
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
+unset($stmt);
 
 $sql = <<<__SQL__
 CREATE PROCEDURE PROC_INOUT(INOUT sales INTEGER)
@@ -63,6 +64,8 @@ end;
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
+unset($stmt);
+
  
 $sql = <<<__SQL__
 CREATE PROCEDURE PROC_IN_OUT_OUT(IN sales INTEGER, OUT tax INTEGER, OUT total INTEGER)
@@ -74,6 +77,8 @@ end;
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
+unset($stmt);
+
 
 $sql = <<<__SQL__
 CREATE PROCEDURE PROC_IN_MULTIRESULT(IN IN_MGR VARCHAR(50))
@@ -86,6 +91,8 @@ end;
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
+unset($stmt);
+
 
 $sql = <<<__SQL__
 CREATE PROCEDURE PROC_IN_IN_MULTIRESULT(IN IN_MGR_1 VARCHAR(50), IN IN_MGR_2 VARCHAR(50))
@@ -97,6 +104,8 @@ end;
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
+unset($stmt);
+
 
 $sql = <<<__SQL__
 CREATE PROCEDURE PROC_IN_OUT_MULTIRESULT(IN IN_MGR_1 VARCHAR(50), OUT IN_MGR_2 VARCHAR(50))
@@ -108,6 +117,8 @@ end;
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
+unset($stmt);
+
 
 $sql = <<<__SQL__
 CREATE PROCEDURE PROC_INOUT_MULTIRESULT(INOUT param VARCHAR(50))
@@ -118,6 +129,8 @@ end;
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
+unset($stmt);
+
 
 $sql = <<<__SQL__
 CREATE PROCEDURE PROC_OUT_MULTIRESULT(OUT param VARCHAR(50))
@@ -129,6 +142,8 @@ end;
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
+unset($stmt);
+
 
 $sql = <<<__SQL__
 CREATE PROCEDURE PROC_NOSPEC_PARAM(param_1 INTEGER, param_2 INTEGER, param_3 INTEGER)
@@ -141,6 +156,8 @@ end;
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
+unset($stmt);
+
 
 $pdo->commit();
 } catch(PDOException $e){

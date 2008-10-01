@@ -3,15 +3,27 @@
 /**
  * @author nowelium
  */
-abstract class HermitStatementBuilder {
+class HermitStatementBuilder {
     const REGEX = '/(\/\*([^\*\/]*)\*\/)(\w+|((\'|")([^(\'|")]*)(\'|")))?/m';
-    public static function prepare(PDO $pdo, ReflectionMethod $method, $sql){
-        $parameterType = self::createParameterType($method);
-        $sql = preg_replace_callback(self::REGEX, array($parameterType, 'match'), $sql);
-        return new HermitStatement($parameterType, $pdo->prepare($sql));
+    private $method;
+    private $sqlCreator;
+    public function __construct(ReflectionMethod $method, HermitSqlCreator $sqlCreator){
+        $this->method = $method;
+        $this->sqlCreator = $sqlCreator;
     }
-    protected static function createParameterType(ReflectionMethod $method){
-        $numOfParams = $method->getNumberOfParameters();
+    public function build(PDO $pdo){
+        $parameter = $this->createParameterType();
+        $sql = $this->sqlCreator->createSql($pdo);
+        $sql = self::preparedSql($parameter, $sql);
+        return new HermitStatement($parameter, $pdo->prepare($sql));
+    }
+
+    protected static function preparedSql(HermitSqlParameter $parameter, $sql){
+        return preg_replace_callback(self::REGEX, array($parameter, 'match'), $sql);
+    }
+
+    protected function createParameterType(){
+        $numOfParams = $this->method->getNumberOfParameters();
         if(0 === $numOfParams){
             return new HermitSqlParameterNull;
         }

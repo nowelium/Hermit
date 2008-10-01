@@ -4,5 +4,5 @@
  * @author nowelium
  */
 interface HermitResultSet {
-    public function execute(HermitStatement $stmt, HermitValueType $type);
+    public function create(HermitStatement $stmt, HermitValueType $type);
 }

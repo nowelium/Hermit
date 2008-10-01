@@ -12,11 +12,11 @@ abstract class HermitDatabaseMetaFactory {
     protected function __construct(){
         // nop
     }
-    public static function getDatabaseName(PDO $pdo){
+    public static function getDbms(PDO $pdo){
         return $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
     }
     public static function get(PDO $pdo){
-        $driver = self::getDatabaseName($pdo);
+        $driver = self::getDbms($pdo);
         if(!isset(self::$dbms[$driver])){
             throw new RuntimeException('unsupported driver: ' . $driver);
         }

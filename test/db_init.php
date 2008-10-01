@@ -1,7 +1,7 @@
 <?php
 
 function db_init(PDO $pdo){
-    $name = HermitDatabaseMetaFactory::getDatabaseName($pdo);
+    $name = HermitDatabaseMetaFactory::getDbms($pdo);
     $_db_init = 'db_' . $name . '_init';
     $_db_init($pdo);
     

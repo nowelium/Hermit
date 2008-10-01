@@ -7,17 +7,26 @@ class HermitProcedureCommand implements HermitSqlCommand {
     private $method;
     private $sqlCreator;
     private $type;
-    public function __construct(ReflectionMethod $method, HermitSqlCreator $sqlCreator, HermitValueType $type){
+    private $annote;
+    public function setMethod(ReflectionMethod $method){
         $this->method = $method;
+    }
+    public function setSqlCreator(HermitSqlCreator $sqlCreator){
         $this->sqlCreator = $sqlCreator;
+    }
+    public function setValueType(HermitValueType $type){
         $this->type = $type;
+    }
+    public function setAnnote(HermitAnnote $annote){
+        $this->annote = $annote;
     }
 
     public function execute(PDO $pdo, array $parameters){
-        $sql = $this->sqlCreator->createSql($pdo);
-        $stmt = HermitStatementBuilder::prepare($pdo, $this->method, $sql);
+        $builder = new HermitProcedureStatementBuilder($this->method, $this->annote, $this->sqlCreator);
+        $stmt = $builder->build($pdo);
         $stmt->execute($parameters);
-        $rs = new HermitProcedureResultSet;
-        return $rs->execute($stmt, $this->type);
+        $rs = new HermitProcedureResultSet($stmt->getSqlParameter());
+        $rs->bindParameter($pdo, $parameters);
+        return $rs->create($stmt, $this->type);
     }
 }

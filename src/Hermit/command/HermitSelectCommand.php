@@ -13,8 +13,8 @@ class HermitSelectCommand implements HermitSqlCommand {
         $this->type = $type;
     }
     public function execute(PDO $pdo, array $parameters){
-        $sql = $this->sqlCreator->createSql($pdo);
-        $stmt = HermitStatementBuilder::prepare($pdo, $this->method, $sql);
+        $builder = new HermitStatementBuilder($this->method, $this->sqlCreator);
+        $stmt = $builder->build($pdo);
         $stmt->execute($parameters);
         $resultset = HermitResultSetFactory::create($this->method);
         return $resultset->execute($stmt, $this->type);
