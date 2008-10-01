@@ -4,7 +4,7 @@ function db_init(PDO $pdo){
     $name = HermitDatabaseMetaFactory::getDbms($pdo);
     $_db_init = 'db_' . $name . '_init';
     $_db_init($pdo);
-    
+
     $sqlpath = dirname(__FILE__) . '/resource/test-' . $name . '.sql.php';
     if(file_exists($sqlpath)){
         require $sqlpath;

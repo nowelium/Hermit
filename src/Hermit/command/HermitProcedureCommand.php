@@ -25,8 +25,10 @@ class HermitProcedureCommand implements HermitSqlCommand {
         $builder = new HermitProcedureStatementBuilder($this->method, $this->annote, $this->sqlCreator);
         $stmt = $builder->build($pdo);
         $stmt->execute($parameters);
-        $rs = new HermitProcedureResultSet($stmt->getSqlParameter());
-        $rs->bindParameter($pdo, $parameters);
-        return $rs->create($stmt, $this->type);
+        $rs = HermitProcedureResultSetFactory::create($pdo, $stmt->getSqlParameter());
+        if($rs instanceof HermitParameterBind){
+            $rs->bindParameter($pdo, $parameters);
+        }
+        return $rs->execute($stmt, $this->type);
     }
 }

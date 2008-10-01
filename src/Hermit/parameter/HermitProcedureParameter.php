@@ -4,47 +4,53 @@
  * @author nowelium
  */
 class HermitProcedureParameter extends HermitSqlParameterHash {
-    private $info;
-    private $dbms;
-    private $outParams = array();
+    protected $info;
+    protected $dbms;
+    protected $outParams = array();
+    protected static $pdoTypes = array(
+        'boolean' => PDO::PARAM_BOOL,
+        'NULL' => PDO::PARAM_NULL,
+        'integer' => PDO::PARAM_INT,
+        'string' => PDO::PARAM_STR
+    );
     public function __construct(HermitProcedureInfo $info, $dbms){
         $this->info = $info;
         $this->dbms = $dbms;
     }
-    public function replace($key, $name, $defaultValue){
-        return call_user_func(array($this, 'replace_' . $this->dbms), $key, $name, $defaultValue);
-    }
-    public function replace_mysql($key, $name, $defaultValue){
-        if($this->info->typeofIn($name)){
-            $this->bindKeys[] = $name;
-            return ':' . $name;
-        }
-        if($this->info->typeofOut($name) || $this->info->typeofInOut($name)){
-            $this->bindKeys[] = $name;
-            $this->outParams[] = $name;
-            return '@' . $name;
-        }
-        throw new RuntimeException('unknown "' . $name . '" parameter');
-    }
-    public function bind(PDOStatement $stmt, $value){
-        return call_user_func(array($this, 'bind_' . $this->dbms), $stmt, $value);
-    }
-
-    public function bind_mysql(PDOStatement $stmt, $value){
-        $param = $value[0];
-        foreach($this->bindKeys as $index => $key){
-            $prefix = '';
-            if($this->info->typeofIn($key)){
-                $stmt->bindParam(':' . $key, $param->$key);
-            }
-        }
-    }
-
     public function getOutParameters(){
         return $this->outParams;
     }
-
+    public function replace($key, $name, $defaultValue){
+        $this->bindKeys[] = $name;
+        if($this->info->typeofOut($name) || $this->info->typeofInOut($name)){
+            $this->outParams[] = $name;
+        }
+        return ':' . $name;
+    }
+    public function bind(PDOStatement $stmt, $value){
+        $param = $value[0];
+        foreach($this->bindKeys as $index => $key){
+            $bindKey = ':' . $key;
+            if($this->info->typeofIn($key)){
+                $stmt->bindParam($bindKey, $param->$key);
+                continue;
+            }
+            $paramValue = $param->$key;
+            if(null === $paramValue){
+                $stmt->bindParam($bindKey, null, PDO::PARAM_NULL | PDO::PARAM_INPUT_OUTPUT);
+                continue;
+            }
+            $gettype = gettype($paramValue);
+            $paramType = -1;
+            if(isset(self::$pdoTypes[$gettype])){
+                $paramType = self::$pdoTypes[$gettype] | PDO::PARAM_INPUT_OUTPUT;
+            } else {
+                $paramType = PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT;
+            }
+            $stmt->bindParam($bindKey, $paramValue, $paramType);
+        }
+    }
     public function hasBindParameters(){
-        return 'mysql' === $this->dbms && 0 < count($this->outParams);
+        return 0 < count($this->outParams);
     }
 }

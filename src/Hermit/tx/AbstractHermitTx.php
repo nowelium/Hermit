@@ -6,17 +6,46 @@
 abstract class AbstractHermitTx implements HermitTx {
     private $txRule = array();
     private $connection;
-    public function hasTransaction(){
+    private $begin = false;
+    public final function hasTransaction(){
+        if($this->begin){
+            return true;
+        }
+        return $this->begin = $this->connection->beginTransaction();
     }
-    public function begin(){
+    public final function begin(){
+        try {
+            if(!$this->begin){
+                $this->begin = $this->connection->beginTransaction();
+            }
+        } catch(Exception $e){
+            // TODO: Nest transaction
+            throw $e;
+        }
     }
-    public function commit(){
+    public final function commit(){
+        try {
+            if($this->connection->commit()){
+                $this->begin = false;
+            }
+        } catch(Exception $e){
+            throw $e;
+        }    
     }
-    public function rollback(){
+    public final function rollback(){
+        try {
+            if ($this->hasTransaction()) {
+                return $this->connection->rollback();
+            }
+        } catch(Exception $e){
+            throw $e;
+        }
     }
-    public function suspend(){
+    public final function suspend(){
+        return $this->connection;
     }
-    public function resume(PDO $connection){
+    public final function resume(PDO $connection){
+        $this->connection = $connection;
     }
     public final function complete(Exception $e){
         foreach($this->txRule as $rule){

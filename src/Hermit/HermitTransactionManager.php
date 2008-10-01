@@ -35,6 +35,7 @@ class HermitTransactionManager implements HermitBehaviorWrapper {
     }
     public function createProxy(HermitProxy $proxy, $targetClass){
         $tx = self::get($targetClass);
+        $tx->resume(HermitDataSourceManager::get($targetClass));
         return new HermitCallableProxy($proxy, array($tx, 'proceed'));
     }
 }

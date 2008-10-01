@@ -7,6 +7,11 @@ class HermitProcedureStatementBuilder extends HermitStatementBuilder {
     private $method;
     private $annote;
     private $sqlCreator;
+
+    protected static $procedureParameters = array(
+        'mysql' => 'HermitMySqlProcedureParameter'
+    );
+
     public function __construct(ReflectionMethod $method, HermitAnnote $annote, HermitSqlCreator $sqlCreator){
         $this->method = $method;
         $this->annote = $annote;
@@ -14,21 +19,27 @@ class HermitProcedureStatementBuilder extends HermitStatementBuilder {
     }
 
     public function build(PDO $pdo){
-        $this->checkProcedureParameter();
+        self::checkProcedureParameter($this->method);
 
         $procedureName = $this->annote->getProcedure($this->method);
         $meta = HermitDatabaseMetaFactory::get($pdo);
         $info = $meta->getProcedureInfo($procedureName);
 
         $dbms = HermitDatabaseMetaFactory::getDbms($pdo);
-        $parameter = new HermitProcedureParameter($info, $dbms);
+        $parameter = null;
+        if(isset(self::$procedureParameters[$dbms])){
+            $className = self::$procedureParameters[$dbms];
+            $parameter = new $className($info, $dbms);
+        } else {
+            $parameter = new HermitProcedureParameter($info, $dbms);
+        }
         $sql = $this->sqlCreator->createSql($pdo);
         $sql = self::preparedSql($parameter, $sql);
         return new HermitStatement($parameter, $pdo->prepare($sql));
     }
     
-    protected function checkProcedureParameter(){
-        $parameters = $this->method->getParameters();
+    protected function checkProcedureParameter(ReflectionMethod $method){
+        $parameters = $method->getParameters();
         $count = count($parameters);
         if(1 < $count){
             throw new InvalidArgumentException('invalid parameters: method parameter must be empty or once HermitParam type');
