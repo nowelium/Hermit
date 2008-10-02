@@ -27,7 +27,7 @@ class HermitStatementBuilder {
         if(0 === $numOfParams){
             return new HermitSqlParameterNull;
         }
-        $params = $method->getParameters();
+        $params = $this->method->getParameters();
         if(1 === $numOfParams){
             return self::createParameterTypeWithIndex($params[0], 0);
         }

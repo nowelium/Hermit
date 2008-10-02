@@ -6,7 +6,8 @@
 abstract class HermitValueTypeFactory {
     protected static $valueTypes = array(
         'HermitArrayValueType',
-        'HermitObjectValueType'
+        'HermitObjectValueType',
+        'HermitNumberValueType'
     );
     public static function create(HermitAnnote $annote, ReflectionMethod $method){
         $value = $annote->getValueType($method);
