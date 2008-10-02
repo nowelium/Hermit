@@ -4,15 +4,16 @@
  * @author nowelium
  */
 class HermitProcedureStatementBuilder extends HermitStatementBuilder {
-    private $method;
-    private $annote;
-    private $sqlCreator;
+    protected $method;
+    protected $annote;
+    protected $sqlCreator;
 
     protected static $procedureParameters = array(
         'mysql' => 'HermitMySqlProcedureParameter'
     );
 
     public function __construct(ReflectionMethod $method, HermitAnnote $annote, HermitSqlCreator $sqlCreator){
+        parent::__construct($method, $sqlCreator);
         $this->method = $method;
         $this->annote = $annote;
         $this->sqlCreator = $sqlCreator;
@@ -33,9 +34,9 @@ class HermitProcedureStatementBuilder extends HermitStatementBuilder {
         } else {
             $parameter = new HermitProcedureParameter($info, $dbms);
         }
-        $sql = $this->sqlCreator->createSql($pdo);
-        $sql = self::preparedSql($parameter, $sql);
-        return new HermitStatement($parameter, $pdo->prepare($sql));
+        
+        $sql = self::preparedSql($parameter, $this->sqlCreator->createSql());
+        return new HermitDefaultStatement($parameter, $pdo->prepare($sql));
     }
     
     protected function checkProcedureParameter(ReflectionMethod $method){

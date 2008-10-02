@@ -4,7 +4,7 @@
  * @author nowelium
  */
 class HermitStatementBuilder {
-    const REGEX = '/(\/\*([^\*\/]*)\*\/)(\w+|((\'|")([^(\'|")]*)(\'|")))?/m';
+    const SQL_COMMENT_REGEXP = '/(\/\*([^\*\/]*)\*\/)(\w+|((\'|")([^(\'|")]*)(\'|")))?/m';
     private $method;
     private $sqlCreator;
     public function __construct(ReflectionMethod $method, HermitSqlCreator $sqlCreator){
@@ -15,11 +15,11 @@ class HermitStatementBuilder {
         $parameter = $this->createParameterType();
         $sql = $this->sqlCreator->createSql($pdo);
         $sql = self::preparedSql($parameter, $sql);
-        return new HermitStatement($parameter, $pdo->prepare($sql));
+        return new HermitDefaultStatement($parameter, $pdo->prepare($sql));
     }
 
     protected static function preparedSql(HermitSqlParameter $parameter, $sql){
-        return preg_replace_callback(self::REGEX, array($parameter, 'match'), $sql);
+        return preg_replace_callback(self::SQL_COMMENT_REGEXP, array($parameter, 'match'), $sql);
     }
 
     protected function createParameterType(){

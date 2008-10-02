@@ -6,6 +6,10 @@
 class HermitDefaultResultSet implements HermitResultSet {
     public function execute(HermitStatement $stmt, HermitValueType $type){
         $type->apply($stmt);
-        return $stmt->fetch();
+        if($row = $stmt->fetch()){
+            $stmt->closeCursor();
+            return $row;
+        }
+        return null;
     }
 }

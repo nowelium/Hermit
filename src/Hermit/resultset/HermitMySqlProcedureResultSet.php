@@ -3,7 +3,7 @@
 /**
  * @author nowelium
  */
-class HermitMySqlProcedureResultSet extends HermitProcedureResultSet {
+class HermitMySqlProcedureResultSet extends HermitProcedureResultSet implements HermitParameterBind {
     /**
      * @override
      */
@@ -17,7 +17,7 @@ class HermitMySqlProcedureResultSet extends HermitProcedureResultSet {
             $stmt = $pdo->prepare('SELECT @' . $name);
             $stmt->bindColumn(1, $param->$name);
             $stmt->execute();
-            
+
             $stmt->fetch(PDO::FETCH_BOUND);
             $stmt->closeCursor();
             unset($stmt);

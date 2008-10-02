@@ -49,7 +49,6 @@ CREATE PROCEDURE PROC_IN_OUT(IN sales INTEGER, OUT tax INTEGER)
 begin
     set tax = sales * 0.2;
 end;
-/
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
@@ -60,7 +59,6 @@ CREATE PROCEDURE PROC_INOUT(INOUT sales INTEGER)
 begin
     set sales = sales * 0.2;
 end;
-/
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
@@ -73,7 +71,6 @@ begin
     set tax = sales * 0.2;
     set total = sales * 1.2;
 end;
-/
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
@@ -87,7 +84,6 @@ begin
   select * from EMP where MGR = IN_MGR;
   select * from EMP where MGR = IN_MGR;
 end;
-/
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
@@ -100,7 +96,6 @@ begin
   select * from EMP where MGR = IN_MGR_1;
   select * from EMP where MGR = IN_MGR_2;
 end;
-/
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
@@ -111,9 +106,8 @@ $sql = <<<__SQL__
 CREATE PROCEDURE PROC_IN_OUT_MULTIRESULT(IN IN_MGR_1 VARCHAR(50), OUT IN_MGR_2 VARCHAR(50))
 begin
   select * from EMP where MGR = IN_MGR_1;
-  select * from EMP where MGR = IN_MGR_1 into IN_MGR_2;
+  set IN_MGR_2 = 'hello world';
 end;
-/
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
@@ -123,9 +117,9 @@ unset($stmt);
 $sql = <<<__SQL__
 CREATE PROCEDURE PROC_INOUT_MULTIRESULT(INOUT param VARCHAR(50))
 begin
-  select * from EMP where empno = param into param;
+  select * from EMP where empno = param;
+  set param = 'hello world';
 end;
-/
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
@@ -135,10 +129,9 @@ unset($stmt);
 $sql = <<<__SQL__
 CREATE PROCEDURE PROC_OUT_MULTIRESULT(OUT param VARCHAR(50))
 begin
-  select * from EMP into param;
-  select * from EMP;
+  set param = 'hello world';
+  select MGR from EMP;
 end;
-/
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();
@@ -152,7 +145,6 @@ begin
   select * from EMP where empno = param_2;
   select * from EMP where empno = param_3;
 end;
-/
 __SQL__;
 $stmt = $pdo->query($sql);
 $stmt->closeCursor();

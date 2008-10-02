@@ -4,9 +4,11 @@
  * @author nowelium
  */
 class HermitMySQLDatabaseMeta implements HermitDatabaseMeta {
+    
     const USING_DB_NAME_SQL = 'SELECT database()';
     const TABLE_INFO_SQL = 'SELECT * FROM %s LIMIT 0';
     const PROCEDIRE_INFO_SQL = 'SELECT param_list, returns FROM mysql.proc WHERE db = :db AND name = :name';
+    
     private $tables = array();
     private $procedures = array();
     private $pdo;
@@ -36,6 +38,8 @@ class HermitMySQLDatabaseMeta implements HermitDatabaseMeta {
                 $info->addPrimaryKey($columnName);
             }
         }
+        $stmt->closeCursor();
+        unset($stmt);
         return $this->tables[$table] = $info;
     }
     public function getProcedureInfo($procedure){
@@ -45,8 +49,12 @@ class HermitMySQLDatabaseMeta implements HermitDatabaseMeta {
         $stmt = $this->pdo->prepare(self::PROCEDIRE_INFO_SQL);
         $stmt->execute(array(':db' => $this->databaseName, ':name' => $procedure));
         $paramList = $stmt->fetchColumn(0);
+        if(false === $paramList){
+            throw new InvalidArgumentException('not found procedure name: ' . $procedure . ' in db: ' . $this->databaseName);
+        }
 
         $info = new HermitProcedureInfo;
+        $info->setName($procedure);
         $chunk = array_map('trim', explode(',', $paramList));
         foreach($chunk as $field){
             $sp = preg_split('/\s+/', $field);
@@ -77,12 +85,18 @@ class HermitMySQLDatabaseMeta implements HermitDatabaseMeta {
             }
         }
 
+        $stmt->closeCursor();
+        unset($stmt);
         return $this->procedures[$procedure] = $info;
     }
 
     protected function getUsingDatabaseName(){
         $stmt = $this->pdo->prepare(self::USING_DB_NAME_SQL);
         $stmt->execute();
-        return $stmt->fetchColumn(0);
+        $result = $stmt->fetchColumn(0);
+        
+        $stmt->closeCursor();
+        unset($stmt);
+        return $result;
     }
 }

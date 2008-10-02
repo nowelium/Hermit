@@ -30,7 +30,6 @@ class HermitMySqlProcedureParameter extends HermitProcedureParameter {
     public function bind(PDOStatement $stmt, $value){
         $param = $value[0];
         foreach($this->bindKeys as $index => $key){
-            $prefix = '';
             if($this->info->typeofIn($key)){
                 $stmt->bindParam(':' . $key, $param->$key);
             }

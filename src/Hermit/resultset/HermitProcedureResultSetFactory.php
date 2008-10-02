@@ -10,7 +10,7 @@ abstract class HermitProcedureResultSetFactory {
     private function __construct(){
         // nop
     }
-    public function create(PDO $pdo, HermitProcedureParameter $parameter){
+    public static function create(PDO $pdo, HermitProcedureParameter $parameter){
         $dbms = HermitDatabaseMetaFactory::getDbms($pdo);
         $rs = null;
         if(isset(self::$resultsets[$dbms])){

@@ -47,20 +47,21 @@ end;
 CREATE PROCEDURE PROC_IN_OUT_MULTIRESULT(IN IN_MGR_1 VARCHAR(50), OUT IN_MGR_2 VARCHAR(50))
 begin
   select * from EMP where MGR = IN_MGR_1;
-  select * from EMP where MGR = IN_MGR_1 into IN_MGR_2;
+  set IN_MGR_2 = 'hello world';
 end;
 /
 
 CREATE PROCEDURE PROC_INOUT_MULTIRESULT(INOUT param VARCHAR(50))
 begin
-  select * from EMP where empno = param into param;
+  select * from EMP where empno = param;
+  set param = 'hello world';
 end;
 /
 
 CREATE PROCEDURE PROC_OUT_MULTIRESULT(OUT param VARCHAR(50))
 begin
-  select * from EMP into param;
-  select * from EMP;
+  set param = 'hello world';
+  select MGR from EMP;
 end;
 /
 

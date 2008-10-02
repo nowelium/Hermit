@@ -10,7 +10,6 @@ class HermitAnnoteConst extends HermitAnnote {
     const QUERY_SUFFIX = '_QUERY';
     const FILE_SUFFIX = '_FILE';
     const PROCEDURE_SUFFIX = '_PROCEDURE';
-    const DELEGATE_SUFFIX = '_DELEGATE';
     const VALUE_TYPE_SUFFIX = '_VALUE_TYPE';
 
     const UNDERSCORE = '_';

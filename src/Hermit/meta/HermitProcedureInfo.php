@@ -4,10 +4,12 @@
  * @author nowelium
  */
 class HermitProcedureInfo implements Serializable {
+    
     const IN_TYPE = 1;
     const OUT_TYPE = 2;
     const INOUT_TYPE = 3;
 
+    private $procedureName;
     private $names = array();
     private $inout = array();
     private $types = array();
@@ -28,7 +30,13 @@ class HermitProcedureInfo implements Serializable {
             $this->$property = $value;
         }
     }
-
+    
+    public function setName($name){
+        $this->procedureName = $name;
+    }
+    public function getName(){
+        return $this->procedureName;
+    }
     public function addParamName($name){
         $this->names[] = $name;
     }
