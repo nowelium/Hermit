@@ -5,7 +5,9 @@
  */
 abstract class HermitResultSetFactory {
     private static $resultset = array(
-        '/List$/i' => 'HermitListResultSet'
+        '/List$/i' => 'HermitListResultSet',
+        '/Count$/i' => 'HermitCountResultSet',
+        '/Iterator$/i' => 'HermitIteratorResultSet'
     );
     public static function create(ReflectionMethod $method){
         $name = $method->getName();
