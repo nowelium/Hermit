@@ -32,7 +32,7 @@ class HermitParam extends stdClass {
         $name = self::accessValue($this, $name);
         $this->$name = $value;
     }
-    public function get($name){
+    public function &get($name){
         $name = self::accessValue($this, $name);
         return $this->$name;
     }
