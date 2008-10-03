@@ -18,11 +18,11 @@ class HermitTransactionManager implements HermitBehaviorWrapper {
         }
         return self::$instance;
     }
-    public function set($targetClass, HermitTx $tx){
+    public static function set($targetClass, HermitTx $tx){
         $instance = self::getInstance();
         $instance->transactionScripts[$targetClass] = $tx;
     }
-    public function get($targetClass){
+    public static function get($targetClass){
         $instance = self::getInstance();
         if(isset($instance->transactionScripts[$targetClass])){
             return null;
