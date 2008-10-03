@@ -29,6 +29,7 @@ class HermitProcedureParameter extends HermitSqlParameterHash {
     }
     public function bind(PDOStatement $stmt, $value){
         $param = $value[0];
+        $param->__init__();
         $propertyNames = $param->getPropertyNames();
 
         foreach($this->bindKeys as $index => $key){
@@ -37,13 +38,13 @@ class HermitProcedureParameter extends HermitSqlParameterHash {
                 if(!in_array($key, $propertyNames)){
                     throw new InvalidArgumentException('param ' . $param . ' has not propery: ' . $key . ' instatement: ' . $stmt->queryString);
                 }
-                $stmt->bindParam($bindKey, $param->$key);
+                $stmt->bindParam($bindKey, $param->get($key));
                 continue;
             }
             
             $paramValue = null;
-            if(isset($param->$key)){
-                $paramValue =  $param->$key;
+            if($param->issetValue($key)){
+                $paramValue = $param->get($key);
             }
             if(null === $paramValue){
                 $stmt->bindParam($bindKey, $paramValue, PDO::PARAM_NULL | PDO::PARAM_INPUT_OUTPUT);

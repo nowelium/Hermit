@@ -12,13 +12,13 @@ class HermitMySqlProcedureResultSet extends HermitProcedureResultSet implements 
             return;
         }
         $param = $parameter[0];
+        $param->__init__();
         $out = $this->procParameter->getOutParameters();
         foreach($out as $name){
             $stmt = $pdo->prepare('SELECT @' . $name);
-            $stmt->bindColumn(1, $param->$name);
             $stmt->execute();
 
-            $stmt->fetch(PDO::FETCH_BOUND);
+            $param->set($name, $stmt->fetchColumn());
             $stmt->closeCursor();
             unset($stmt);
         }
