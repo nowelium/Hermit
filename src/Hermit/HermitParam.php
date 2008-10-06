@@ -52,8 +52,12 @@ class HermitParam extends stdClass {
     public function __toString(){
         $tos = array();
         foreach($this as $name => $value){
-            $tos[] = $name . '=>' . $value;
+            if(null === $value){
+              $tos[] = $name . ':null';
+            } else {
+              $tos[] = $name . ':' . $value;
+            }
         }
-        return __CLASS__ . ' {' . join(',', $tos) . '}';
+        return __CLASS__ . ' {' . join(', ', $tos) . '}';
     }
 }
