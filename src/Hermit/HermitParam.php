@@ -4,6 +4,7 @@
  * @author nowelium
  */
 class HermitParam extends stdClass {
+    const COLUMN_SUFFIX = '_COLUMN';
     private $__accessKeys__;
     protected static function accessKeys(HermitParam $target){
         $ref = new ReflectionObject($target);
@@ -12,7 +13,12 @@ class HermitParam extends stdClass {
     protected static function accessValue(HermitParam $target, $name){
         $target->checkAccessKey();
         if(isset($target->__accessKeys__[$name])){
-            $name = preg_replace('/_KEY$/', '', $target->__accessKeys__[$name]);
+            $keyName = $target->__accessKeys__[$name];
+            // -7 == -1 * strlen('_COLUMN');
+            $key = substr($keyName, -7);
+            if(self::COLUMN_SUFFIX === $key){
+                $name = substr($keyName, 0, -7);
+            }
         }
         return $name;
     }
