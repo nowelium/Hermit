@@ -11,8 +11,12 @@ class HermitSqlParameterClassHash extends HermitSqlParameterHash {
     public function bind(PDOStatement $stmt, $value){
         foreach($value as $index => $obj){
             foreach($this->bindKeys as $index => $key){
-                $method = $this->reflector->getMethod('get' . ucfirst($key));
-                $stmt->bindValue(':' . $key, $method->invoke($obj));
+                if($obj instanceof HermitParam){
+                    $stmt->bindValue(':' . $key, $obj->get($key));
+                } else {
+                    $method = $this->reflector->getMethod('get' . ucfirst($key));
+                    $stmt->bindValue(':' . $key, $method->invoke($obj));
+                }
             }
         }
     }
