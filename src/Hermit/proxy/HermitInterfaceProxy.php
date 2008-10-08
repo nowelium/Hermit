@@ -19,7 +19,7 @@ class HermitInterfaceProxy implements HermitFutureProxy {
         if(!$this->commandFactory->has($name)){
             throw new BadMethodCallException($this->reflector->getName() . '::' . $name);
         }
-        $command = $this->commandFactory->create($this->context, $name);
+        $command = $this->commandFactory->create($name);
         return $command->execute($params);
     }
 }

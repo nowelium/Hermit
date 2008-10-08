@@ -7,10 +7,12 @@ class HermitObjectProxy implements HermitFutureProxy {
     protected $context;
     protected $target;
     protected $annote;
+    protected $commandFactory;
     protected function __construct(HermitContext $ctx, ReflectionClass $reflector, $target){
         $this->context = $ctx;
         $this->target = $target;
         $this->annote = HermitAnnote::create($reflector);
+        $this->commandFactory = new HermitSqlCommandFactory($ctx, $reflector);
     }
     public static function delegate(HermitContext $ctx, ReflectionClass $reflector, $instance = null){
         return new self($ctx, $reflector, $instance);
@@ -20,8 +22,7 @@ class HermitObjectProxy implements HermitFutureProxy {
             $method = $this->annote->getMethod($name);
             return $method->invokeArgs($this->target, $params);
         }
-        $pdo = HermitDataSourceManager::get($this->reflector->getName());
-        $command = $this->commandFactory->create($pdo, $name);
+        $command = $this->commandFactory->create($name);
         return $command->execute($pdo, $params);
     }
 }
