@@ -33,13 +33,16 @@ class Hermit {
     }
     protected static function __create($targetClass){
         if(is_object($targetClass)){
-            return HermitObjectProxy::delegate(new ReflectionObject($targetClass), $targetClass);
+            $refObject = new ReflectionObject($targetClass);
+            $ctx = new HermitContext($refObject->getName());
+            return HermitObjectProxy::delegate($ctx, $refObject, $targetClass);
         }
         $reflector = new ReflectionClass($targetClass);
+        $ctx = new HermitContext($targetClass);
         if($reflector->isInterface()){
-            return HermitInterfaceProxy::delegate($reflector);
+            return HermitInterfaceProxy::delegate($ctx, $reflector);
         }
-        return HermitClassProxy::delegate($reflector);
+        return HermitClassProxy::delegate($ctx, $reflector);
     }
     protected static function wrap(HermitProxy $proxy, $targetClass){
         if(0 < count(self::$behaviors)){

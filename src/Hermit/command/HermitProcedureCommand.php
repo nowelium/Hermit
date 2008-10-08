@@ -3,24 +3,13 @@
 /**
  * @author nowelium
  */
-class HermitProcedureCommand implements HermitSqlCommand {
-    private $method;
-    private $sqlCreator;
-    private $type;
-    private $annote;
-    public function setMethod(ReflectionMethod $method){
-        $this->method = $method;
-    }
-    public function setSqlCreator(HermitSqlCreator $sqlCreator){
-        $this->sqlCreator = $sqlCreator;
-    }
-    public function setValueType(HermitValueType $type){
-        $this->type = $type;
-    }
+class HermitProcedureCommand extends AbstractHermitSqlCommand {
+    protected $annote;
     public function setAnnote(HermitAnnote $annote){
         $this->annote = $annote;
     }
-    public function execute(PDO $pdo, array $parameters){
+    public function execute(array $parameters){
+        $pdo = $this->getConnection(HermitEvent::EVT_PROCEDURE);
         if($this->sqlCreator instanceof HermiSetupSqlCreator){
             if($this->sqlCreator->hasSetupSql()){
                 $setupBuilder = new HermitSetupStatementBuilder($this->method, $this->annote, $this->sqlCreator);

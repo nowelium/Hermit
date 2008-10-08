@@ -4,14 +4,16 @@
  * @author nowelium
  */
 class HermitObjectProxy implements HermitFutureProxy {
+    protected $context;
     protected $target;
     protected $annote;
-    protected function __construct(ReflectionClass $reflector, $target){
+    protected function __construct(HermitContext $ctx, ReflectionClass $reflector, $target){
+        $this->context = $ctx;
         $this->target = $target;
         $this->annote = HermitAnnote::create($reflector);
     }
-    public static function delegate(ReflectionClass $reflector, $instance = null){
-        return new self($reflector, $instance);
+    public static function delegate(HermitContext $ctx, ReflectionClass $reflector, $instance = null){
+        return new self($ctx, $reflector, $instance);
     }
     public function request($name, array $params){
         if($this->annote->hasMethod($name)){

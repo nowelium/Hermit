@@ -3,16 +3,9 @@
 /**
  * @author nowelium
  */
-class HermitSelectCommand implements HermitSqlCommand {
-    private $method;
-    private $sqlCreator;
-    private $type;
-    public function __construct(ReflectionMethod $method, HermitSqlCreator $sqlCreator, HermitValueType $type){
-        $this->method = $method;
-        $this->sqlCreator = $sqlCreator;
-        $this->type = $type;
-    }
-    public function execute(PDO $pdo, array $parameters){
+class HermitSelectCommand extends AbstractHermitSqlCommand {
+    public function execute(array $parameters){
+        $pdo = $this->getConnection(HermitEvent::EVT_SELECT);
         $builder = new HermitStatementBuilder($this->method, $this->sqlCreator);
         $stmt = $builder->build($pdo);
         $stmt->execute($parameters);
