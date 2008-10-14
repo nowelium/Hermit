@@ -4,6 +4,7 @@
  * @author nowelium
  */
 class HermitStatementBuilder {
+    const IF_COMMEND_REGEXP = '/\/\*IF\s([^(\*\/)]+|.+)\*\//ms';
     const SQL_COMMENT_REGEXP = '/(\/\*([^\*\/]*)\*\/)(\w+|((\'|")([^(\'|")]*)(\'|")))?/m';
     private $method;
     private $sqlCreator;
@@ -14,6 +15,9 @@ class HermitStatementBuilder {
     public function build(PDO $pdo){
         $parameter = $this->createParameterType();
         $sql = $this->sqlCreator->createSql($pdo);
+        if(preg_match(self::IF_COMMEND_REGEXP, $sql)){
+            return new HermitLazyStatement($parameter, $pdo, $sql);
+        }
         $sql = self::preparedSql($parameter, $sql);
         return new HermitDefaultStatement($parameter, $pdo->prepare($sql));
     }
