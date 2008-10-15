@@ -30,7 +30,7 @@ abstract class AbstractHermitTx implements HermitTx {
             }
         } catch(Exception $e){
             throw $e;
-        }    
+        }
     }
     public final function rollback(){
         try {
@@ -63,7 +63,7 @@ abstract class AbstractHermitTx implements HermitTx {
     public final function addCommitRule(Exception $e){
         $this->txRule[] = new HermitTxRule($this, $e, true);
     }
-    public final function addRollbackRurle(Exception $e){
+    public final function addRollbackRule(Exception $e){
         $this->txRule[] = new HermitTxRule($this, $e, false);
     }
 }

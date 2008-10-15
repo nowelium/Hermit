@@ -13,6 +13,6 @@ interface HermitTx {
     public function proceed(HermitProxy $proxy, $name, array $parameters);
     public function complete(Exception $e);
     public function addCommitRule(Exception $e);
-    public function addRollbackRurle(Exception $e);
+    public function addRollbackRule(Exception $e);
     public static function create();
 }

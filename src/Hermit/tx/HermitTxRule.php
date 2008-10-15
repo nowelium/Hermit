@@ -3,7 +3,7 @@
 /**
  * @author nowelium
  */
-class HermitTxRurle {
+class HermitTxRule {
     private $tx;
     private $exception;
     private $commit;
