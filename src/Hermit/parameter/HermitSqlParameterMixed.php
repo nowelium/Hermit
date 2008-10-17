@@ -20,7 +20,6 @@ class HermitSqlParameterMixed extends HermitSqlParameter {
         $values = (array) $value;
         foreach($this->parameters as $param){
             $param->bind($stmt, $values);
-            array_shift($values);
         }
     }
 }

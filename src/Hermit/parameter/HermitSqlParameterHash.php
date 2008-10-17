@@ -14,8 +14,8 @@ class HermitSqlParameterHash extends HermitSqlParameter {
         return ':' . $name;
     }
     public function bind(PDOStatement $stmt, $value){
-        foreach($this->bindKeys as $index => $key){
-            $stmt->bindValue(':' . $key, $value[$index]);
+        foreach($this->names as $name => $pos){
+            $stmt->bindValue(':' . $name, $value[$pos]);
         }
     }
 }

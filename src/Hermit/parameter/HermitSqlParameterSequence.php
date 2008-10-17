@@ -8,8 +8,8 @@ class HermitSqlParameterSequence extends HermitSqlParameterHash {
         return $this->bindKeys[] = '?';
     }
     public function bind(PDOStatement $stmt, $value){
-        foreach($this->bindKeys as $index => $key){
-            $stmt->bindValue($index, $this->names[$index]);
+        foreach($this->names as $name => $pos){
+            $stmt->bindValue($pos, $value[$pos]);
         }
     }
 }

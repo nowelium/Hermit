@@ -37,24 +37,24 @@ class HermitStatementBuilder {
         }
         $parameter = new HermitSqlParameterMixed;
         foreach($params as $index => $param){
-            $parameter->add(self::createParameterTypeWithIndex($param, $index));
+            $parameter->add(self::createParameterTypeWithIndex($param, $param->getPosition()));
         }
         return $parameter;
     }
     protected static function createParameterTypeWithIndex(ReflectionParameter $ref, $index){
         if($ref->isArray()){
             $parameter = new HermitSqlParameterSequence;
-            $parameter->add($ref->getName(), $index);
+            $parameter->add($ref->getName(), $ref->getPosition());
             return $parameter;
         }
         $class = $ref->getClass();
         if(is_null($class)){
             $parameter = new HermitSqlParameterHash;
-            $parameter->add($ref->getName(), $index);
+            $parameter->add($ref->getName(), $ref->getPosition());
             return $parameter;
         }
         $parameter = new HermitSqlParameterClassHash($class);
-        $parameter->add($ref->getName(), $index);
+        $parameter->add($ref->getName(), $ref->getPosition());
         return $parameter;
     }
 }
