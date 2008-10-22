@@ -8,7 +8,7 @@ abstract class HermitDataSourceManager {
     private static $callback;
     private static $datasources = array();
     private function __construct(){
-        // mp@
+        // nop
     }
     public static function setDefault(PDO $default){
         self::$default = $default;
@@ -22,8 +22,14 @@ abstract class HermitDataSourceManager {
     public static function hasCallback(){
         return null !== self::$callback;
     }
+    public static function getCallback(){
+        return self::$callback;
+    }
     public static function set($targetClass, PDO $pdo){
         self::$datasources[$targetClass] = $pdo;
+    }
+    public static function has($targetClass){
+        return isset(self::$datasources[$targetClass]);
     }
     public static function get($targetClass, $method = null, $type = HermitEvent::UNKNOWN){
         if(self::hasCallback()){
@@ -34,8 +40,5 @@ abstract class HermitDataSourceManager {
             return self::$default;
         }
         return self::$datasources[$targetClass];
-    }
-    public static function has($targetClass){
-        return isset(self::$datasources[$targetClass]);
     }
 }

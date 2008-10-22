@@ -19,6 +19,12 @@ class HermitStatementBuilder {
             return new HermitLazyStatement($parameter, $pdo, $sql);
         }
         $sql = self::preparedSql($parameter, $sql);
+        
+        $logger = HermitLoggerManager::getLogger();
+        if($logger->isDebugEnabled()){
+            $logger->debug('preparedSql: "%s"', $sql);
+        }
+        
         $statement = $pdo->prepare($sql);
         return new HermitDefaultStatement($parameter, $statement);
     }

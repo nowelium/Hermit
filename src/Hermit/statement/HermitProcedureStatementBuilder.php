@@ -36,7 +36,13 @@ class HermitProcedureStatementBuilder extends HermitStatementBuilder {
         }
         
         $sql = self::preparedSql($parameter, $this->sqlCreator->createSql());
-        return new HermitDefaultStatement($parameter, $pdo->prepare($sql));
+        
+        $logger = HermitLoggerManager::getLogger();
+        if($logger->isDebugEnabled()){
+            $logger->debug('preparedSql: "%s"', $sql);
+        }
+        $statement = $pdo->prepare($sql);
+        return new HermitDefaultStatement($parameter, $statement);
     }
     
     protected function checkProcedureParameter(ReflectionMethod $method){
