@@ -24,7 +24,7 @@ class HermitSqlParameterClassHash extends HermitSqlParameterHash {
                     $buf .= $key . ' => ' . $v;
                 }
             }
-            $logger->debug('statement binds parameter {:key => param} = %s', $buf);
+            $logger->debug('{%s} statement binds parameter {:key => param} = %s', __CLASS__, $buf);
         }
         
         

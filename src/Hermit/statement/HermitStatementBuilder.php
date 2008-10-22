@@ -22,7 +22,7 @@ class HermitStatementBuilder {
         
         $logger = HermitLoggerManager::getLogger();
         if($logger->isDebugEnabled()){
-            $logger->debug('preparedSql: "%s"', $sql);
+            $logger->debug('{%s} preparedSql: "%s"', __CLASS__, $sql);
         }
         
         $statement = $pdo->prepare($sql);

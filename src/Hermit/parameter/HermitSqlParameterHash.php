@@ -20,7 +20,7 @@ class HermitSqlParameterHash extends HermitSqlParameter {
             foreach($this->names as $name => $pos){
                 $buf .= ':' . $name . ' => ' . $value[$pos];
             }
-            $logger->debug('statement binds parameter {:key => param} = %s', $buf);
+            $logger->debug('{%s} statement binds parameter {:key => param} = %s', __CLASS__, $buf);
         }
         foreach($this->names as $name => $pos){
             $stmt->bindValue(':' . $name, $value[$pos]);

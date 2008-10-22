@@ -18,6 +18,13 @@ class HermitSetupStatementBuilder extends HermitProcedureStatementBuilder {
         $parameter = new HermitProcedureParameter($info, $dbms);
         
         $setupSql = self::preparedSql($parameter, $this->sqlCreator->createSetupSql());
-        return new HermitDefaultStatement($parameter, $pdo->prepare($setupSql));
+        
+        $logger = HermitLoggerManager::getLogger();
+        if($logger->isDebugEnabled()){
+            $logger->debug('{%s} preparedSql: "%s"', __CLASS__, $sql);
+        }
+        
+        $statement = $pdo->prepare($setupSql);
+        return new HermitDefaultStatement($parameter, $statement);
     }
 }

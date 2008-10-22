@@ -14,7 +14,7 @@ class HermitSqlParameterSequence extends HermitSqlParameterHash {
             foreach($this->names as $name => $pos){
                 $buf .= $pos . ' => ' . $value[$pos];
             }
-            $logger->debug('statement binds parameter {:index => param} = %s', $buf);
+            $logger->debug('{%s} statement binds parameter {:index => param} = %s', __CLASS__, $buf);
         }
         foreach($this->names as $name => $pos){
             $stmt->bindValue($pos, $value[$pos]);
