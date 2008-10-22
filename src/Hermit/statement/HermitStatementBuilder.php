@@ -19,7 +19,8 @@ class HermitStatementBuilder {
             return new HermitLazyStatement($parameter, $pdo, $sql);
         }
         $sql = self::preparedSql($parameter, $sql);
-        return new HermitDefaultStatement($parameter, $pdo->prepare($sql));
+        $statement = $pdo->prepare($sql);
+        return new HermitDefaultStatement($parameter, $statement);
     }
 
     protected static function preparedSql(HermitSqlParameter $parameter, $sql){
