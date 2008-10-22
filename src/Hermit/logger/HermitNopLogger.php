@@ -18,6 +18,6 @@ class HermitNopLogger extends HermitLogger {
     }
     public function debug(){
     }
-    protected abstract function doLog($level, array $args){
+    protected function doLog($level, array $args){
     }
 }
