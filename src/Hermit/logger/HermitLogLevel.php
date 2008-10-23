@@ -22,7 +22,7 @@ class HermitLogLevel {
     
     const UNKNOWN = 'unknown level';
     
-    public function toName($level){
+    public static function toName($level){
         if(self::ALL === $level){
             return self::ALL_NAME;
         }
