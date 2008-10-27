@@ -29,6 +29,10 @@ class HermitSqlCommandFactory {
     protected function createCommand(ReflectionMethod $method){
         $methodName = $method->getName();
         $pdo = HermitDataSourceManager::get($this->context->getTargetClass(), $methodName, HermitEvent::EVT_SETUP);
+        if(null === $pdo){
+            throw new RuntimeException('setup connection fail. pdo: ' . $pdo);
+        }
+        
         if($this->annote->isProcedureMethod($method)){
             return $this->createProcedureCommand($pdo, $method);
         }

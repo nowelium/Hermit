@@ -27,7 +27,6 @@ class HermitSqlParameterClassHash extends HermitSqlParameterHash {
             $logger->debug('{%s} statement binds parameter {:key => param} = %s', __CLASS__, $buf);
         }
         
-        
         foreach($value as $obj){
             foreach($this->bindKeys as $key){
                 if($obj instanceof HermitParam){
