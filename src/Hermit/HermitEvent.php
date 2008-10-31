@@ -34,4 +34,7 @@ class HermitEvent {
     public static function isWrite($evt){
         return self::EVT_WRITE === ($evt & self::MASK);
     }
+    public static function isProcedure($evt){
+        return self::EVT_PROCEDURE === ($evt & self::MASK);
+    }
 }
