@@ -24,7 +24,7 @@ class HermitEvent {
 
     const UNKNOWN = -1;
     const MASK = 0x78;
-
+    
     public static function isInit($evt){
         return self::EVT_INIT === ($evt & self::MASK);
     }
@@ -36,5 +36,39 @@ class HermitEvent {
     }
     public static function isProcedure($evt){
         return self::EVT_PROCEDURE === ($evt & self::MASK);
+    }
+    
+    //
+    // TODO: もう少しいい方法を考える
+    //
+    public static function toName($evt){
+        if(self::EVT_INIT === $evt){
+            return 'EVT_INIT';
+        }
+        if(self::EVT_SETUP === $evt){
+            return 'EVT_SETUP';
+        }
+        if(self::EVT_READ === $evt){
+            return 'EVT_READ';
+        }
+        if(self::EVT_SELECT === $evt){
+            return 'EVT_SELECT';
+        }
+        if(self::EVT_WRITE === $evt){
+            return 'EVT_WRITE';
+        }
+        if(self::EVT_INSERT === $evt){
+            return 'EVT_INSERT';
+        }
+        if(self::EVT_UPDATE === $evt){
+            return 'EVT_UPDATE';
+        }
+        if(self::EVT_DELETE === $evt){
+            return 'EVT_DELETE';
+        }
+        if(self::EVT_PROCEDURE === $evt){
+            return 'EVT_PROCEDURE';
+        }
+        return 'UNKNOWN';
     }
 }
