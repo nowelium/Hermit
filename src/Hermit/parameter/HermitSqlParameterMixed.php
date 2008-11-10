@@ -22,4 +22,17 @@ class HermitSqlParameterMixed extends HermitSqlParameter {
             $param->bind($stmt, $values);
         }
     }
+    
+    public function monoCreate($expression, $statement, $parameterValue){
+        foreach($this->parameters as $param){
+            $expression = $param->monoCreate($expression, $statement, $parameterValue);
+        }
+        return $expression;
+    }
+    public function binoCreate($expression, $trueStatement, $falseStatement, $parameterValue){
+        foreach($this->parameters as $param){
+            $expression = $param->binoCreate($expression, $trueStatement, $falseStatement, $parameterValue);
+        }
+        return $expression;
+    }
 }

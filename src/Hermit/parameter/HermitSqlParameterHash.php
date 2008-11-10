@@ -26,4 +26,26 @@ class HermitSqlParameterHash extends HermitSqlParameter {
             $stmt->bindValue(':' . $name, $value[$pos]);
         }
     }
+    
+    public function monoCreate($expression, $statement, $parameterValue){
+        throw new RuntimeException('T.B.D');
+    }
+    public function binoCreate($expression, $trueStatement, $falseStatement, $parameterValue){
+        foreach($this->names as $name => $pos){
+            if(strpos($expression, $name) !== false){
+                $value = $parameterValue[$pos];
+                if(is_string($value)){
+                    $value = '\'' . $value . '\'';
+                }
+                
+                $expression = strtr($expression, array($name => $value));
+                if(eval('return ' . $expression . ';')){
+                    $expression = $trueStatement;
+                } else {
+                    $expression = $falseStatement;
+                }
+            }
+        }
+        return $expression;
+    }
 }

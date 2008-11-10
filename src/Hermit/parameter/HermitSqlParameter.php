@@ -12,4 +12,7 @@ abstract class HermitSqlParameter {
     }
     public abstract function replace($key, $name, $defaultValue);
     public abstract function bind(PDOStatement $stmt, $value);
+    
+    public abstract function monoCreate($expression, $statement, $parameterValue);
+    public abstract function binoCreate($expression, $trueStatement, $falseStatement, $parameterValue);
 }
