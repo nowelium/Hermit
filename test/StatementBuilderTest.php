@@ -39,7 +39,7 @@ interface Hoge {
     public function getB(HogeDto $dto);
 }
 
-$pdo = new PDO('sqlite://:memory:');
+$pdo = new PDO('sqlite::memory:');
 $pdo->exec('
 create table A (
   hoge int,
