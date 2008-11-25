@@ -10,7 +10,7 @@ class HermitDeleteSqlCommandFactory extends AbstractHermitUpdateSqlCommandFactor
             $sqlCreator = new HermitAutoDeleteSqlCreator;
         }
         $sqlCreator->initialize($pdo, $this->method, $this->annote);
-        $valueType = HermitValueTypeFactory::create($this->annote, $thi->method);
+        $valueType = HermitValueTypeFactory::create($this->annote, $this->method);
         
         $command = new HermitDeleteCommand;
         $command->setContext($context);
