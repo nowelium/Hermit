@@ -15,8 +15,7 @@ class Hermit {
         } else if(HermitDaoManager::has($class)){
           $class = HermitDaoManager::get($class);
         }
-        $proxy = self::__create($class);
-        $this->proxy = self::wrap($proxy, $class);
+        $this->proxy = self::__create($class);
     }
     public function __call($name, $parameters = array()){
         if(0 < count($this->calls)){
@@ -32,23 +31,30 @@ class Hermit {
         return $proxy->request($name, $params);
     }
     protected static function __create($targetClass){
+        $proxy = null;
+        $reflector = null;
+        $ctx = null;
         if(is_object($targetClass)){
-            $refObject = new ReflectionObject($targetClass);
-            $ctx = new HermitContext($refObject->getName());
-            return HermitObjectProxy::delegate($ctx, $refObject, $targetClass);
+            $reflector = new ReflectionObject($targetClass);
+            $ctx = new HermitContext($reflector->getName());
+            $proxy = HermitObjectProxy::delegate($ctx, $reflector, $targetClass);
+        } else {
+            $reflector = new ReflectionClass($targetClass);
+            $ctx = new HermitContext($targetClass);
+            if($reflector->isInterface()){
+                $proxy = HermitInterfaceProxy::delegate($ctx, $reflector);
+            } else {
+               $proxy = HermitClassProxy::delegate($ctx, $reflector);
+            }
         }
-        $reflector = new ReflectionClass($targetClass);
-        $ctx = new HermitContext($targetClass);
-        if($reflector->isInterface()){
-            return HermitInterfaceProxy::delegate($ctx, $reflector);
-        }
-        return HermitClassProxy::delegate($ctx, $reflector);
+        return self::wrap($ctx, $proxy);
     }
-    protected static function wrap(HermitProxy $proxy, $targetClass){
+    protected static function wrap(HermitContext $ctx, HermitProxy $proxy){
         if(0 < count(self::$behaviors)){
+            $targetClass = $ctx->getTargetClass();
             foreach(self::$behaviors as $behavior){
                 if($behavior->has($targetClass)){
-                    return $behavior->createProxy($proxy, $targetClass);
+                    return $behavior->createProxy($ctx, $proxy);
                 }
             }
         }

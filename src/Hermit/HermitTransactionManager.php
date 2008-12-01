@@ -4,8 +4,9 @@
  * @author nowelium
  */
 class HermitTransactionManager implements HermitBehaviorWrapper {
-    private static $instance;
-    private $transactionScripts = array();
+    protected static $instance;
+    protected $transactionScripts = array();
+    protected $proxyClass = 'HermitCallableTxProxy';
     private function __construct(){
         // nop
     }
@@ -24,18 +25,27 @@ class HermitTransactionManager implements HermitBehaviorWrapper {
     }
     public static function get($targetClass){
         $instance = self::getInstance();
-        if(isset($instance->transactionScripts[$targetClass])){
-            return null;
-        }
-        return $instance->transactionScripts[$targetClass];
+        return $instance->getTransactionScript($targetClass);
+    }
+    public static function setProxyClass($className){
+        $instance = self::getInstance();
+        $instance->proxyClass = $className;
     }
     public function has($targetClass){
         $instance = self::getInstance();
         return isset($instance->transactionScripts[$targetClass]);
     }
-    public function createProxy(HermitProxy $proxy, $targetClass){
-        $tx = self::get($targetClass);
-        $tx->resume(HermitDataSourceManager::get($targetClass));
-        return new HermitCallableProxy($proxy, array($tx, 'proceed'));
+    protected function getTransactionScript($targetClass){
+        if(isset($this->transactionScripts[$targetClass])){
+            return $this->transactionScripts[$targetClass];
+        }
+        return null;
+    }
+    public function createProxy(HermitContext $ctx, HermitProxy $proxy){
+        $instance = self::getInstance();
+        $className = $instance->proxyClass;
+        $targetClass = $ctx->getTargetClass();
+        $tx = $instance->getTransactionScript($targetClass);
+        return new $className($ctx, $proxy, $tx, 'proceed');
     }
 }

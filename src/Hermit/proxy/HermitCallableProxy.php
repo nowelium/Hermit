@@ -4,13 +4,16 @@
  * @author nowelium
  */
 class HermitCallableProxy implements HermitProxy {
-    private $proxy;
-    private $call = array();
-    public function __construct(HermitProxy $proxy, array $callable){
+    protected $proxy;
+    protected $target;
+    protected $methodName;
+    public function __construct(HermitProxy $proxy, $target, $methodName){
         $this->proxy = $proxy;
-        $this->call = $callable;
+        $this->target = $target;
+        $this->methodName = $methodName;
     }
     public function request($name, array $parameters){
-        return call_user_func($this->call, $this->proxy, $name, $parameters);
+        $callable = array($this->target, $this->methodName);
+        return call_user_func($callable, $this->proxy, $name, $parameters);
     }
 }

@@ -5,5 +5,5 @@
  */
 interface HermitBehaviorWrapper {
     public function has($targetClass);
-    public function createProxy(HermitProxy $proxy, $targetClass);
+    public function createProxy(HermitContext $ctx, HermitProxy $proxy);
 }

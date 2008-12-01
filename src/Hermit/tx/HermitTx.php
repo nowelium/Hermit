@@ -14,5 +14,4 @@ interface HermitTx {
     public function complete(Exception $e);
     public function addCommitRule(Exception $e);
     public function addRollbackRule(Exception $e);
-    public static function create();
 }

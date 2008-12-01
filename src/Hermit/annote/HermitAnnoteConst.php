@@ -15,11 +15,6 @@ class HermitAnnoteConst extends HermitAnnote {
     const UNDERSCORE = '_';
     const SQL_FILE_EXTENSION = '.sql';
 
-    const PROCEDURE_NAMES = '/^(proc|call)/i';
-    const INSERT_NAMES = '/^(insert|create|add)/i';
-    const UPDATE_NAMES = '/^(update|modify|store)/i';
-    const DELETE_NAMES = '/^(delete|remove)/i';
-
     protected $reflector;
     public function __construct(ReflectionClass $reflector){
         $this->reflector = $reflector;
@@ -51,18 +46,6 @@ class HermitAnnoteConst extends HermitAnnote {
     }
     public function getMethod($name){
         return $this->reflector->getMethod($name);
-    }
-    public function isProcedureMethod(ReflectionMethod $method){
-        return 1 === preg_match(self::PROCEDURE_NAMES, $method->getName());
-    }
-    public function isInsertMethod(ReflectionMethod $method){
-        return 1 === preg_match(self::INSERT_NAMES, $method->getName());
-    }
-    public function isUpdateMethod(ReflectionMethod $method){
-        return 1 === preg_match(self::UPDATE_NAMES, $method->getName());
-    }
-    public function isDeleteMethod(ReflectionMethod $method){
-        return 1 === preg_match(self::DELETE_NAMES, $method->getName());
     }
     public function getProcedure(ReflectionMethod $method){
         $key = $method->getName() . self::PROCEDURE_SUFFIX;

@@ -33,13 +33,13 @@ class HermitSqlCommandFactory {
             throw new RuntimeException('setup connection fail. pdo: ' . $pdo);
         }
         
-        if($this->annote->isProcedureMethod($method)){
+        if(HermitNamingUtils::isProcedure($methodName)){
             $factory = new HermitProcedureSqlCommandFactory;
-        } else if($this->annote->isInsertMethod($method)){
+        } else if(HermitNamingUtils::isInsert($methodName)){
             $factory = new HermitInsertSqlCommandFactory;
-        } else if($this->annote->isUpdateMethod($method)){
+        } else if(HermitNamingUtils::isUpdate($methodName)){
             $factory = new HermitUpdateSqlCommandFactory;
-        } else if($this->annote->isDeleteMethod($method)){
+        } else if(HermitNamingUtils::isDelete($methodName)){
             $factory = new HermitDeleteSqlCommandFactory;
         } else {
             $factory = new HermitSelectSqlCommandFactory;
