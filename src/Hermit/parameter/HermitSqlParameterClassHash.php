@@ -18,8 +18,13 @@ class HermitSqlParameterClassHash extends HermitSqlParameterHash {
                     if($obj instanceof HermitParam){
                         $v = $obj->get($key);
                     } else {
-                        $method = $this->reflector->getMethod('get' . ucfirst($key));
-                        $v = $method->invoke($obj);
+                        $methodName = 'get' . ucfirst($key);
+                        if($this->reflector->hasMethod($methodName)){
+                            $method = $this->reflector->getMethod($methodName);
+                            $v = $method->invoke($obj);
+                        } else {
+                            $v = $obj->$key;
+                        }
                     }
                     $buf .= $key . ' => ' . $v;
                 }
@@ -32,8 +37,13 @@ class HermitSqlParameterClassHash extends HermitSqlParameterHash {
                 if($obj instanceof HermitParam){
                     $stmt->bindValue(':' . $key, $obj->get($key));
                 } else {
-                    $method = $this->reflector->getMethod('get' . ucfirst($key));
-                    $stmt->bindValue(':' . $key, $method->invoke($obj));
+                    $methodName = 'get' . ucfirst($key);
+                    if($this->reflector->hasMethod($methodName)){
+                        $method = $this->reflector->getMethod($methodName);
+                        $stmt->bindValue(':' . $key, $method->invoke($obj));
+                    } else {
+                        $stmt->bindValue(':' . $key, $obj->$key);
+                    }
                 }
             }
         }
