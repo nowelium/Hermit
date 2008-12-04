@@ -8,6 +8,9 @@ class HermitSqlParameterClassHash extends HermitSqlParameterHash {
     public function __construct(ReflectionClass $reflector){
         $this->reflector = $reflector;
     }
+    protected function hasParameter($name){
+        return $this->reflector->hasProperty($name);
+    }
     public function bind(PDOStatement $stmt, $value){
         $logger = HermitLoggerManager::getLogger();
         if($logger->isDebugEnabled()){
@@ -27,11 +30,11 @@ class HermitSqlParameterClassHash extends HermitSqlParameterHash {
                         }
                     }
                     $buf .= $key . ' => ' . $v;
+                    $buf .= ', ';
                 }
             }
             $logger->debug('{%s} statement binds parameter {:key => param} = %s', __CLASS__, $buf);
         }
-        
         foreach($value as $obj){
             foreach($this->bindKeys as $key){
                 if($obj instanceof HermitParam){

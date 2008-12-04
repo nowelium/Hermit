@@ -24,4 +24,14 @@ abstract class AbstractHermitUpdateSqlCommandFactory implements HermitCommandFac
         }
         return null;
     }
+    protected function appendSql(HermitAppendableSqlCreator $creator){
+        $query = $this->annote->getQuery($this->method);
+        if(null !== $query){
+            $creator->addQuery($query);
+        }
+        $order = $this->annote->getOrder($this->method);
+        if(null !== $order){
+            $creator->addOrder($order);
+        }
+    }
 }

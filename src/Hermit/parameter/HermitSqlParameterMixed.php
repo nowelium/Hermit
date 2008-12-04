@@ -6,8 +6,16 @@
 class HermitSqlParameterMixed extends HermitSqlParameter {
     private $index = 0;
     private $parameters = array();
-    public function add(HermitSqlParameter $param){
-        $this->parameters[] = $param;
+    public function add(HermitSqlParameter $param, $index){
+        $this->parameters[$index] = $param;
+    }
+    protected function hasParameter($name){
+        foreach($this->parameters as $param){
+            if($param->hasParameter($name)){
+                return true;
+            }
+        }
+        return false;
     }
     public function replace($key, $name, $defaultValue){
         return $this->parameters[$this->index++]->replace($key, $name, $defaultValue);

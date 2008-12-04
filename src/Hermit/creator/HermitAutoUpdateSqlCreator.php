@@ -3,9 +3,9 @@
 /**
  * @author nowelium
  */
-class HermitAutoUpdateSqlCreator implements HermitSqlCreator {
-    private $sql;
-    private $query;
+class HermitAutoUpdateSqlCreator implements HermitSqlCreator, HermitAppendableSqlCreator {
+    protected $sql;
+    protected $query;
     public function initialize(PDO $pdo, ReflectionMethod $method, HermitAnnote $annote){
         $meta = HermitDatabaseMetaFactory::get($pdo);
         $table = $annote->getTable();
@@ -46,8 +46,7 @@ class HermitAutoUpdateSqlCreator implements HermitSqlCreator {
         $sql = '';
         $sql .= $this->sql;
         if(null !== $this->query){
-            $sql .= ' ';
-            $sql .= 'WHERE';
+            $sql .= HermitQueryUtils::addQuery($sql, $this->query);
             $sql .= ' ';
             $sql .= $this->query;
         }
@@ -56,6 +55,6 @@ class HermitAutoUpdateSqlCreator implements HermitSqlCreator {
     public function addQuery($queryString){
         $this->query = $queryString;
     }
-    public function addLimit($limit){
+    public function addOrder($order){
     }
 }

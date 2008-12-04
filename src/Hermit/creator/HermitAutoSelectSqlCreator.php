@@ -4,9 +4,9 @@
  * @author nowelium
  */
 class HermitAutoSelectSqlCreator implements HermitSqlCreator, HermitAppendableSqlCreator {
-    private $select;
-    private $query;
-    private $limit;
+    protected $select;
+    protected $query;
+    protected $order;
     public function initialize(PDO $pdo, ReflectionMethod $method, HermitAnnote $annote){
         $meta = HermitDatabaseMetaFactory::get($pdo);
         $table = $annote->getTable();
@@ -25,23 +25,20 @@ class HermitAutoSelectSqlCreator implements HermitSqlCreator, HermitAppendableSq
         $sql = '';
         $sql .= $this->select;
         if(null !== $this->query){
-            $sql .= ' ';
-            $sql .= 'WHERE';
+            $sql .= HermitQueryUtils::addQuery($sql, $this->query);
             $sql .= ' ';
             $sql .= $this->query;
         }
-        if(null !== $this->limit){
+        if(null !== $this->order){
             $sql .= ' ';
-            $sql .= 'LIMIT';
-            $sql .= ' ';
-            $sql .= $this->limit;
+            $sql .= $this->order;
         }
         return $sql;
     }
     public function addQuery($queryString){
         $this->query = $queryString;
     }
-    public function addLimit($limit){
-        $this->limit = $limit;
+    public function addOrder($orderString){
+        $this->order = $orderString;
     }
 }

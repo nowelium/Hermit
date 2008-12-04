@@ -10,6 +10,9 @@ class HermitUpdateSqlCommandFactory extends AbstractHermitUpdateSqlCommandFactor
             $sqlCreator = new HermitAutoUpdateSqlCreator;
         }
         $sqlCreator->initialize($pdo, $this->method, $this->annote);
+        if($sqlCreator instanceof HermitAppendableSqlCreator){
+            $this->appendSql($sqlCreator);
+        }
         $valueType = HermitValueTypeFactory::create($this->annote, $this->method);
         
         $command = new HermitUpdateCommand;

@@ -44,5 +44,9 @@ class HermitSelectSqlCommandFactory implements HermitCommandFactory {
         if(null !== $query){
             $creator->addQuery($query);
         }
+        $order = $this->annote->getOrder($this->method);
+        if(null !== $order){
+            $creator->addOrder($order);
+        }
     }
 }

@@ -20,6 +20,9 @@ class HermitProcedureParameter extends HermitSqlParameterHash {
     public function getOutParameters(){
         return $this->outParams;
     }
+    protected function hasParameter($name){
+        return in_array($name, $this->info->getParamNames());
+    }
     public function replace($key, $name, $defaultValue){
         $this->bindKeys[] = $name;
         if($this->info->typeofOut($name) || $this->info->typeofInOut($name)){

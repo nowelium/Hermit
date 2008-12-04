@@ -3,14 +3,11 @@
 /**
  * @author nowelium
  */
-class HermitStaticSqlCreator implements HermitSqlCreator {
-    private $sql;
+class HermitStaticSqlCreator extends HermitAutoSelectSqlCreator {
     public function __construct($sql){
-        $this->sql = $sql;
+        $this->select = $sql;
     }
     public function initialize(PDO $pdo, ReflectionMethod $method, HermitAnnote $annote){
-    }
-    public function createSql(){
-        return $this->sql;
+        // nop
     }
 }

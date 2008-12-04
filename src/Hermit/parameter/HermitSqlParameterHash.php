@@ -9,6 +9,9 @@ class HermitSqlParameterHash extends HermitSqlParameter {
     public function add($name, $index){
         $this->names[$name] = $index;
     }
+    protected function hasParameter($name){
+        return isset($this->names[$name]);
+    }
     public function replace($key, $name, $defaultValue){
         $this->bindKeys[] = $name;
         return ':' . $name;
@@ -22,6 +25,7 @@ class HermitSqlParameterHash extends HermitSqlParameter {
             }
             $logger->debug('{%s} statement binds parameter {:key => param} = %s', __CLASS__, $buf);
         }
+        
         foreach($this->names as $name => $pos){
             $stmt->bindValue(':' . $name, $value[$pos]);
         }

@@ -8,8 +8,12 @@ abstract class HermitSqlParameter {
         if(count($matches) < 4){
             throw new RuntimeException('sql comment was fail: ' . join(',', $matches));
         }
-        return $this->replace($matches[1], $matches[2], $matches[3]);
+        if($this->hasParameter($matches[2])){
+            return $this->replace($matches[1], $matches[2], $matches[3]);
+        }
+        return $matches[3];
     }
+    protected abstract function hasParameter($name);
     public abstract function replace($key, $name, $defaultValue);
     public abstract function bind(PDOStatement $stmt, $value);
     

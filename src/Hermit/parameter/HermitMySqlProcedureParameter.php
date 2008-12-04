@@ -43,6 +43,7 @@ class HermitMySqlProcedureParameter extends HermitProcedureParameter {
                     $v = $method->invoke($param);
                 }
                 $buf .= $key . ' => ' . $v;
+                $buf .= ', ';
             }
             $logger->debug('{%s} statement binds parameter {:key => param} = %s', __CLASS__, $buf);
         }
