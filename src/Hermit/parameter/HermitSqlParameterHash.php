@@ -32,16 +32,66 @@ class HermitSqlParameterHash extends HermitSqlParameter {
     }
     
     public function monoCreate($expression, $statement, $parameterValue){
-        throw new RuntimeException('T.B.D');
+        foreach($this->names as $name => $pos){
+            if(!isset($parameterValue[$pos])){
+                continue;
+            }
+            $value = $parameterValue[$pos];
+            if(is_object($value)){
+                // value was dto
+                $r = new ReflectionClass($value);
+                $props = $r->getProperties();
+                foreach($props as $property){
+                    $propertyName = $property->getName();
+                    if(false === strpos($expression, $propertyName)){
+                        continue;
+                    }
+                    $namedValue = self::makeExpression($value->$propertyName);
+                    $expression = strtr($expression, array($propertyName => $namedValue));
+                    if(eval('return ' . $expression . ';')){
+                        return $statement;
+                    }
+                }
+            } else {
+                if(false === strpos($expression, $name)){
+                    continue;
+                }
+                $value = self::makeExpression($value);
+                $expression = strtr($expression, array($name => $value));
+                if(eval('return ' . $expression . ';')){
+                    return $statement;
+                }
+            }
+        }
+        return '';
     }
     public function binoCreate($expression, $trueStatement, $falseStatement, $parameterValue){
         foreach($this->names as $name => $pos){
-            if(strpos($expression, $name) !== false){
-                $value = $parameterValue[$pos];
-                if(is_string($value)){
-                    $value = '\'' . $value . '\'';
+            if(!isset($parameterValue[$pos])){
+                continue;
+            }
+            $value = $parameterValue[$pos];
+            if(is_object($value)){
+                // value was dto
+                $r = new ReflectionClass($value);
+                $props = $r->getProperties();
+                foreach($props as $property){
+                    $propertyName = $property->getName();
+                    if(false === strpos($expression, $propertyName)){
+                        continue;
+                    }
+                    $namesValue = self::makeExpression($value->$propertyName);
+                    
+                    $expression = strtr($expression, array($propertyName => $namesValue));
+                    if(eval('return ' . $expression . ';')){
+                        $expression = $statement;
+                    }
                 }
-                
+            } else {
+                if(false === strpos($expression, $name)){
+                    continue;
+                }
+                $value = self::makeExpression($parameterValue[$pos]);
                 $expression = strtr($expression, array($name => $value));
                 if(eval('return ' . $expression . ';')){
                     $expression = $trueStatement;
@@ -51,5 +101,15 @@ class HermitSqlParameterHash extends HermitSqlParameter {
             }
         }
         return $expression;
+    }
+    
+    protected static function makeExpression($value){
+        if(null === $value){
+            return 'null';
+        }
+        if(is_string($value)){
+            return '\'' . $value . '\'';
+        }
+        return $value;
     }
 }
