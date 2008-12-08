@@ -13,6 +13,8 @@ class HermitAnnoteConst extends HermitAnnote {
     const PROCEDURE_SUFFIX = '_PROCEDURE';
     const VALUE_TYPE_SUFFIX = '_VALUE_TYPE';
     const CHECK_SINGLE_ROW_UPDATE = 'CHECK_SINGLE_ROW_UPDATE';
+    
+    const DEFAULT_PREFIX = 'default';
 
     const UNDERSCORE = '_';
     const SQL_FILE_EXTENSION = '.sql';
@@ -30,10 +32,16 @@ class HermitAnnoteConst extends HermitAnnote {
         }
         return substr($buf, 0, -1);
     }
-    protected static function getAnnotation(ReflectionClass $reflector, ReflectionMethod $method, $suffix){
+    protected static function getMethodAnnotation(ReflectionClass $reflector, ReflectionMethod $method, $suffix){
         $key = $method->getName() . $suffix;
         if($reflector->hasConstant($key)){
             return $reflector->getConstant($key);
+        }
+        return null;
+    }
+    protected static function getClassAnnotation(ReflectionClass $reflector, $name){
+        if($reflector->hasConstant($name)){
+            return $reflector->getConstant($name);
         }
         return null;
     }
@@ -58,7 +66,7 @@ class HermitAnnoteConst extends HermitAnnote {
         return $this->reflector->getMethod($name);
     }
     public function getProcedure(ReflectionMethod $method){
-        return self::getAnnotation($this->reflector, $method, self::PROCEDURE_SUFFIX);
+        return self::getMethodAnnotation($this->reflector, $method, self::PROCEDURE_SUFFIX);
     }
     public function getSql(ReflectionMethod $method, $suffix = null){
         if(is_null($suffix)){
@@ -88,14 +96,14 @@ class HermitAnnoteConst extends HermitAnnote {
         return null;
     }
     public function getQuery(ReflectionMethod $method){
-        return self::getAnnotation($this->reflector, $method, self::QUERY_SUFFIX);
+        return self::getMethodAnnotation($this->reflector, $method, self::QUERY_SUFFIX);
     }
     public function getOrder(ReflectionMethod $method){
-        return self::getAnnotation($this->reflector, $method, self::ORDER_SUFFIX);
+        return self::getMethodAnnotation($this->reflector, $method, self::ORDER_SUFFIX);
     }
     
     public function getFile(ReflectionMethod $method){
-        $path = self::getAnnotation($this->reflector, $method, self::FILE_SUFFIX);
+        $path = self::getMethodAnnotation($this->reflector, $method, self::FILE_SUFFIX);
         if($path !== null){
             if(file_exists($path)){
                 return file_get_contents($path);
@@ -104,6 +112,10 @@ class HermitAnnoteConst extends HermitAnnote {
         return null;
     }
     public function getValueType(ReflectionMethod $method){
-        return self::getAnnotation($this->reflector, $method, self::VALUE_TYPE_SUFFIX);
+        $valueType = self::getMethodAnnotation($this->reflector, $method, self::VALUE_TYPE_SUFFIX);
+        if(null === $valueType){
+            return self::getClassAnnotation($this->reflector, self::DEFAULT_PREFIX . self::VALUE_TYPE_SUFFIX);
+        }
+        return $valueType;
     }
 }
