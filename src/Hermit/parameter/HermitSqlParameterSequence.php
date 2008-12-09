@@ -12,12 +12,12 @@ class HermitSqlParameterSequence extends HermitSqlParameterHash {
         if($logger->isDebugEnabled()){
             $buf = '';
             foreach($this->names as $name => $pos){
-                $buf .= $pos . ' => ' . $value[$pos];
+                $buf .= $pos . ' => ' . join(',', $value[$pos]);
             }
             $logger->debug('{%s} statement binds parameter {:index => param} = %s', __CLASS__, $buf);
         }
         foreach($this->names as $name => $pos){
-            $stmt->bindValue($pos, $value[$pos]);
+            $stmt->bindValue($pos + 1, join(',', $value[$pos]));
         }
     }
 }
