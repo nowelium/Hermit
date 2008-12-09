@@ -4,6 +4,14 @@
  * @author nowelium
  */
 abstract class HermitSqlParameter {
+    protected $inputParameters = array();
+    public final function setInputParameters(array $inputParameters){
+        $this->inputParameters = $inputParameters;
+    }
+    public final function getInputParameters(){
+        return $this->inputParameters;
+    }
+    
     public function match($matches){
         if(count($matches) < 4){
             throw new RuntimeException('sql comment was fail: ' . join(',', $matches));

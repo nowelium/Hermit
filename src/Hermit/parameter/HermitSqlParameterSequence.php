@@ -5,7 +5,9 @@
  */
 class HermitSqlParameterSequence extends HermitSqlParameterHash {
     public function replace($key, $name, $defaultValue){
-        return $this->bindKeys[] = '?';
+        $inputParams = $this->getInputParameters();
+        $index = $this->names[$name];
+        return join(',', array_fill(0, count($inputParams[$index]), '?'));
     }
     public function bind(PDOStatement $stmt, $value){
         $logger = HermitLoggerManager::getLogger();
@@ -16,8 +18,11 @@ class HermitSqlParameterSequence extends HermitSqlParameterHash {
             }
             $logger->debug('{%s} statement binds parameter {:index => param} = %s', __CLASS__, $buf);
         }
+        $index = 0;
         foreach($this->names as $name => $pos){
-            $stmt->bindValue($pos + 1, join(',', $value[$pos]));
+            foreach($value[$pos] as $v){
+                $stmt->bindValue($pos + (++$index), $v);
+            }
         }
     }
 }

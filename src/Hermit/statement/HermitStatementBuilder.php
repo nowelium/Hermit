@@ -13,8 +13,10 @@ class HermitStatementBuilder {
         $this->method = $method;
         $this->sqlCreator = $sqlCreator;
     }
-    public function build(PDO $pdo){
+    public function build(PDO $pdo, array $inputParameters){
         $parameter = HermitSqlParameterFactory::createParameterType($this->method);
+        $parameter->setInputParameters($inputParameters);
+        
         $sql = $this->sqlCreator->createSql($pdo);
         if(preg_match(self::IF_COMMEND_REGEXP, $sql)){
             return new HermitLazyStatement($this, $parameter, $pdo, $sql);
