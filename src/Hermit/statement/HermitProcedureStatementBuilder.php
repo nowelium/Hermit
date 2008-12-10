@@ -19,7 +19,7 @@ class HermitProcedureStatementBuilder extends HermitStatementBuilder {
         $this->sqlCreator = $sqlCreator;
     }
 
-    public function build(PDO $pdo){
+    public function build(PDO $pdo, array $inputParameters){
         self::checkProcedureParameter($this->method);
 
         $procedureName = $this->annote->getProcedure($this->method);
@@ -34,6 +34,7 @@ class HermitProcedureStatementBuilder extends HermitStatementBuilder {
         } else {
             $parameter = new HermitProcedureParameter($info, $dbms);
         }
+        $parameter->setInputParameters($inputParameters);
         
         $sql = self::preparedSql($parameter, $this->sqlCreator->createSql());
         

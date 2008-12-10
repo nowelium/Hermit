@@ -13,13 +13,13 @@ class HermitProcedureCommand extends AbstractHermitSqlCommand {
         if($this->sqlCreator instanceof HermiSetupSqlCreator){
             if($this->sqlCreator->hasSetupSql()){
                 $setupBuilder = new HermitSetupStatementBuilder($this->method, $this->annote, $this->sqlCreator);
-                $setupStatement = $setupBuilder->build($pdo);
+                $setupStatement = $setupBuilder->build($pdo, $parameters);
                 $setupStatement->execute($parameters);
             }
         }
         
         $builder = new HermitProcedureStatementBuilder($this->method, $this->annote, $this->sqlCreator);
-        $stmt = $builder->build($pdo);
+        $stmt = $builder->build($pdo, $parameters);
         $stmt->execute($parameters);
         $rs = HermitProcedureResultSetFactory::create($pdo, $stmt->getSqlParameter());
 //
