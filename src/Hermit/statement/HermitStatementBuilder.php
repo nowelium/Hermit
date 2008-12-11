@@ -7,15 +7,23 @@ class HermitStatementBuilder {
     const IF_COMMEND_REGEXP = '/\/\*IF\s(.*?)\*\/(.*?)\/\*END\*\//ms';
     const ELSE_COMMEND_REGEXP = '/(.*)--ELSE\s(.*)/ms';
     const SQL_COMMENT_REGEXP = '/(\/\*([^\*\/]*)\*\/)(\w+|((\'|")([^(\'|")]*)(\'|")))?/m';
-    private $method;
-    private $sqlCreator;
-    public function __construct(ReflectionMethod $method, HermitSqlCreator $sqlCreator){
+    protected $targetClass;
+    protected $method;
+    protected $sqlCreator;
+    
+    public function __construct(ReflectionClass $targetClass, ReflectionMethod $method, HermitSqlCreator $sqlCreator){
+        //
+        // TODO: ここのコンストラクタパラメータの引き継ぎがめんどいので、setterにすること
+        //
+        $this->targetClass = $targetClass;
         $this->method = $method;
         $this->sqlCreator = $sqlCreator;
     }
     public function build(PDO $pdo, array $inputParameters){
         $parameter = HermitSqlParameterFactory::createParameterType($this->method);
         $parameter->setInputParameters($inputParameters);
+        $parameter->setTargetClass($this->targetClass);
+        $parameter->setTargetMethod($this->method);
         
         $sql = $this->sqlCreator->createSql($pdo);
         if(preg_match(self::IF_COMMEND_REGEXP, $sql)){

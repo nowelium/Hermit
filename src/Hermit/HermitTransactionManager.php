@@ -43,9 +43,9 @@ class HermitTransactionManager implements HermitBehaviorWrapper {
     }
     public function createProxy(HermitContext $ctx, HermitProxy $proxy){
         $instance = self::getInstance();
-        $className = $instance->proxyClass;
-        $targetClass = $ctx->getTargetClass();
+        $proxyClass = $instance->proxyClass;
+        $targetClass = $ctx->getName();
         $tx = $instance->getTransactionScript($targetClass);
-        return new $className($ctx, $proxy, $tx, 'proceed');
+        return new $proxyClass($ctx, $proxy, $tx, 'proceed');
     }
 }

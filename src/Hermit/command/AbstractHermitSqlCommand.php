@@ -22,7 +22,7 @@ abstract class AbstractHermitSqlCommand implements HermitSqlCommand {
     }
     protected function getConnection($event = HermitEvent::UNKNOWN){
         return HermitDataSourceManager::get(
-            $this->context->getTargetClass(),
+            $this->context->getName(),
             $this->method->getName(),
             $event
         );

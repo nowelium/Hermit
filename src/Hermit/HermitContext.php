@@ -4,11 +4,17 @@
  * @author nowelium
  */
 class HermitContext {
-    protected $targetClass;
-    public function __construct($targetClass){
-        $this->targetClass = $targetClass;
+    protected $reflector;
+    public function __construct(ReflectionClass $reflector){
+        $this->reflector = $reflector;
+    }
+    public function getTarget(){
+        return $this->target;
+    }
+    public function getName(){
+        return $this->reflector->getName();
     }
     public function getTargetClass(){
-        return $this->targetClass;
+        return $this->reflector;
     }
 }

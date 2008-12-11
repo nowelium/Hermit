@@ -9,16 +9,17 @@ class HermitProcedureCommand extends AbstractHermitSqlCommand {
         $this->annote = $annote;
     }
     public function execute(array $parameters){
+        $targetClass = $this->context->getTargetClass();
         $pdo = $this->getConnection(HermitEvent::EVT_PROCEDURE);
         if($this->sqlCreator instanceof HermiSetupSqlCreator){
             if($this->sqlCreator->hasSetupSql()){
-                $setupBuilder = new HermitSetupStatementBuilder($this->method, $this->annote, $this->sqlCreator);
+                $setupBuilder = new HermitSetupStatementBuilder($targetClass, $this->method, $this->annote, $this->sqlCreator);
                 $setupStatement = $setupBuilder->build($pdo, $parameters);
                 $setupStatement->execute($parameters);
             }
         }
         
-        $builder = new HermitProcedureStatementBuilder($this->method, $this->annote, $this->sqlCreator);
+        $builder = new HermitProcedureStatementBuilder($targetClass, $this->method, $this->annote, $this->sqlCreator);
         $stmt = $builder->build($pdo, $parameters);
         $stmt->execute($parameters);
         $rs = HermitProcedureResultSetFactory::create($pdo, $stmt->getSqlParameter());

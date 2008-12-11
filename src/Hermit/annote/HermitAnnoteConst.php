@@ -6,6 +6,7 @@
 class HermitAnnoteConst extends HermitAnnote {
     
     const TABLE_KEY = 'TABLE';
+    const COLUMNS_KEY = 'COLUMNS';
     const SQL_SUFFIX = '_SQL';
     const QUERY_SUFFIX = '_QUERY';
     const ORDER_SUFFIX = '_ORDER';
@@ -117,5 +118,9 @@ class HermitAnnoteConst extends HermitAnnote {
             return self::getClassAnnotation($this->reflector, self::DEFAULT_PREFIX . self::VALUE_TYPE_SUFFIX);
         }
         return $valueType;
+    }
+    public function getColumns(){
+        $columns = $this->reflector->getConstant(self::COLUMNS_KEY);
+        return array_map('trim', explode(',', $columns));
     }
 }

@@ -4,8 +4,8 @@
  * @author nowelium
  */
 class HermitSetupStatementBuilder extends HermitProcedureStatementBuilder {
-    public function __construct(ReflectionMethod $method, HermitAnnote $annote, HermitSqlCreator $sqlCreator){
-        parent::__construct($method, $annote, $sqlCreator);
+    public function __construct(ReflectionClass $targetClass, ReflectionMethod $method, HermitAnnote $annote, HermitSqlCreator $sqlCreator){
+        parent::__construct($targetClass, $method, $annote, $sqlCreator);
     }
     public function build(PDO $pdo, array $inputParameters){
         parent::checkProcedureParameter($this->method);
@@ -17,6 +17,8 @@ class HermitSetupStatementBuilder extends HermitProcedureStatementBuilder {
         $dbms = HermitDatabaseMetaFactory::getDbms($pdo);
         $parameter = new HermitProcedureParameter($info, $dbms);
         $parameter->setInputParameters($inputParameters);
+        $parameter->setTargetClass($this->targetClass);
+        $parameter->setTargetMethod($this->method);
         
         $setupSql = self::preparedSql($parameter, $this->sqlCreator->createSetupSql());
         

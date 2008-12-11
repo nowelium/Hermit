@@ -8,6 +8,7 @@ abstract class HermitAnnote {
         // nop
     }
     public abstract function getTable();
+    public abstract function getColumns();
     public abstract function hasMethod($name);
     public abstract function getMethod($name);
     public abstract function getProcedure(ReflectionMethod $method);

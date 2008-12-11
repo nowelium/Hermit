@@ -40,7 +40,7 @@ class HermitCallableTxProxy extends HermitCallableProxy {
         return $tx->resume($this->getDataSource($methodName, $type));
     }
     protected function getDataSource($methodName, $type){
-        $targetClass = $this->context->getTargetClass();
-        return HermitDataSourceManager::get($targetClass, $methodName, $type);
+        $target = $this->context->getName();
+        return HermitDataSourceManager::get($target, $methodName, $type);
     }
 }

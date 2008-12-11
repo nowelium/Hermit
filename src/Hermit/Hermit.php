@@ -36,11 +36,11 @@ class Hermit {
         $ctx = null;
         if(is_object($targetClass)){
             $reflector = new ReflectionObject($targetClass);
-            $ctx = new HermitContext($reflector->getName());
+            $ctx = new HermitContext($reflector);
             $proxy = HermitObjectProxy::delegate($ctx, $reflector, $targetClass);
         } else {
             $reflector = new ReflectionClass($targetClass);
-            $ctx = new HermitContext($targetClass);
+            $ctx = new HermitContext($reflector);
             if($reflector->isInterface()){
                 $proxy = HermitInterfaceProxy::delegate($ctx, $reflector);
             } else {
@@ -51,7 +51,7 @@ class Hermit {
     }
     protected static function wrap(HermitContext $ctx, HermitProxy $proxy){
         if(0 < count(self::$behaviors)){
-            $targetClass = $ctx->getTargetClass();
+            $targetClass = $ctx->getName();
             foreach(self::$behaviors as $behavior){
                 if($behavior->has($targetClass)){
                     return $behavior->createProxy($ctx, $proxy);

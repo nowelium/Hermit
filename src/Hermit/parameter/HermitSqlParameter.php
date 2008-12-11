@@ -4,6 +4,8 @@
  * @author nowelium
  */
 abstract class HermitSqlParameter {
+    protected $targetClass;
+    protected $targetMethod;
     protected $inputParameters = array();
     public final function setInputParameters(array $inputParameters){
         $this->inputParameters = $inputParameters;
@@ -11,15 +13,35 @@ abstract class HermitSqlParameter {
     public final function getInputParameters(){
         return $this->inputParameters;
     }
+    public final function setTargetClass(ReflectionClass $targetClass){
+        $this->targetClass = $targetClass;
+    }
+    public final function getTargetClass(){
+        return $this->targetClass;
+    }
+    public final function setTargetMethod(ReflectionMethod $targetMethod){
+        $this->targetMethod = $targetMethod;
+    }
+    public final function getTargetMethod(){
+        return $this->targetMethod;
+    }
     
     public function match($matches){
         if(count($matches) < 4){
             throw new RuntimeException('sql comment was fail: ' . join(',', $matches));
         }
-        if($this->hasParameter($matches[2])){
-            return $this->replace($matches[1], $matches[2], $matches[3]);
+        list($all, $key, $name, $defaultValue) = $matches;
+        
+        if($this->hasParameter($name)){
+            return $this->replace($key, $name, $defaultValue);
         }
-        return $matches[3];
+        $annote = HermitAnnote::create($this->targetClass);
+        $columns = $annote->getColumns();
+        $columnsLower = array_map('strtolower', $columns);
+        if(in_array(strtolower($name), $columnsLower)){
+            return $this->replace($key, $name, $defaultValue);
+        }
+        return $defaultValue;
     }
     protected abstract function hasParameter($name);
     public abstract function replace($key, $name, $defaultValue);
