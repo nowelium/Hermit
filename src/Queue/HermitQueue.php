@@ -8,5 +8,4 @@ interface HermitQueue {
     public function wait();
     public function end();
     public function abort();
-    public function enqueue();
 }

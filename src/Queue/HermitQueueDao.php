@@ -14,8 +14,6 @@ interface HermitQueueDao {
     const abort_SQL = 'SELECT queue_abort()';
     public function abort();
     
-    public function add(HermitParam $param);
-    
     const get_VALUE_TYPE = 'OBJ';
     public function get();
 }

@@ -23,10 +23,6 @@ final class HermitQueueRecord {
         $this->completed = true;
         return $this->queue->end();
     }
-    public function retry(){
-        $this->completed = true;
-        return $this->queue->enqueue();
-    }
     public function get(){
         return $this->queue->fetch();
     }

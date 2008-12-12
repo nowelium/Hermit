@@ -29,14 +29,6 @@ class HermitQueueIterator implements HermitQueue, Iterator {
     public function abort(){
         return $this->hermit->abort();
     }
-    public function enqueue(){
-        $param = new HermitParam;
-        $row = $this->fetch();
-        foreach($row as $property => $value){
-            $param->set($property, $value);
-        }
-        return $this->hermit->add($param);
-    }
     public function rewind(){
         $this->index = 0;
     }
