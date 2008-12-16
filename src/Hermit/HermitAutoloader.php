@@ -16,6 +16,7 @@ abstract class HermitAutoloader {
         '/resultset',
         '/responder',
         '/tx',
+        '/util',
         '/valuetype',
         '/logger'
     );

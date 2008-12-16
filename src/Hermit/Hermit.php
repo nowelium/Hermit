@@ -6,6 +6,7 @@
 class Hermit {
     protected $proxy;
     protected $context;
+    protected $calls = array();
     protected static $behaviors = array();
     public function __construct($class = null){
         if(is_null($class)){
