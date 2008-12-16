@@ -14,3 +14,17 @@ foreach($filter as $key => $queue){
     echo 'next', PHP_EOL;
     sleep(2);
 }
+
+//
+// equals.
+//
+// $iterator = new HermitQ('HogeQueue', 2);
+// echo 'start', PHP_EOL;
+// foreach($iterator as $key => $queue){
+//     var_dump($key, $queue->get());
+//     $queue->complete();
+//
+//     echo 'next', PHP_EOL;
+//     sleep(2);
+// }
+//

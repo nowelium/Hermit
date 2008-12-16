@@ -5,7 +5,7 @@
  */
 class Hermit {
     protected $proxy;
-    protected $calls = array();
+    protected $context;
     protected static $behaviors = array();
     public function __construct($class = null){
         if(is_null($class)){
@@ -15,7 +15,7 @@ class Hermit {
         } else if(HermitDaoManager::has($class)){
           $class = HermitDaoManager::get($class);
         }
-        $this->proxy = self::__create($class);
+        $this->proxy = self::__create($this, $class);
     }
     public function __call($name, $parameters = array()){
         if(0 < count($this->calls)){
@@ -30,7 +30,7 @@ class Hermit {
     protected static function __request(HermitProxy $proxy, $name, array $params){
         return $proxy->request($name, $params);
     }
-    protected static function __create($targetClass){
+    protected static function __create(self $instance, $targetClass){
         $proxy = null;
         $reflector = null;
         $ctx = null;
@@ -47,6 +47,7 @@ class Hermit {
                $proxy = HermitClassProxy::delegate($ctx, $reflector);
             }
         }
+        $instance->context = $ctx;
         return self::wrap($ctx, $proxy);
     }
     protected static function wrap(HermitContext $ctx, HermitProxy $proxy){
