@@ -20,7 +20,7 @@ abstract class AbstractHermitTx implements HermitTx {
             }
         } catch(Exception $e){
             // TODO: Nest transaction
-            throw $e;
+            throw new HermitTxException($e->getMessage(), $e->getCode());
         }
     }
     public final function commit(){
@@ -29,16 +29,16 @@ abstract class AbstractHermitTx implements HermitTx {
                 $this->begin = false;
             }
         } catch(Exception $e){
-            throw $e;
+            throw new HermitTxException($e->getMessage(), $e->getCode());
         }
     }
     public final function rollback(){
         try {
-            if ($this->hasTransaction()) {
-                return $this->connection->rollback();
+            if ($this->hasTransaction() && $this->connection->rollback()){
+                $this->begin = false;
             }
         } catch(Exception $e){
-            throw $e;
+            throw new HermitTxException($e->getMessage(), $e->getCode());
         }
     }
     public final function suspend(){
@@ -54,7 +54,7 @@ abstract class AbstractHermitTx implements HermitTx {
                     return $rule->complete();
                 }
             } catch(Exception $e1){
-                throw $e1;
+                throw new HermitTxException($e->getMessage(), $e->getCode());
             }
         }
         $this->rollback();

@@ -14,6 +14,7 @@ interface HermitQueueDao {
     const abort_SQL = 'SELECT queue_abort()';
     public function abort();
     
+    const get_QUERY = 'queue_wait(/*table*/"table")';
     const get_VALUE_TYPE = 'OBJ';
-    public function get();
+    public function get($table);
 }
