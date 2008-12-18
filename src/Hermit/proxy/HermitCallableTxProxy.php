@@ -11,27 +11,22 @@ class HermitCallableTxProxy extends HermitCallableProxy {
     }
     public function request($name, array $parameters){
         $tx = $this->target;
-        $methodName = $this->methodName;
-        if(HermitNamingUtils::isProcedure($methodName)){
-        }
 
-        $isWritable = false;
         $type = HermitEvent::UNKNOWN;
-        if(HermitNamingUtils::isProcedure($methodName)){
+        if(HermitNamingUtils::isProcedure($name)){
             $type = HermitEvent::EVT_PROCEDURE;
-        } else if(HermitNamingUtils::isInsert($methodName)){
+        } else if(HermitNamingUtils::isInsert($name)){
             $type = HermitEvent::EVT_INSERT;
-        } else if(HermitNamingUtils::isUpdate($methodName)){
+        } else if(HermitNamingUtils::isUpdate($name)){
             $type = HermitEvent::EVT_UPDATE;
-        } else if(HermitNamingUtils::isDelete($methodName)){
+        } else if(HermitNamingUtils::isDelete($name)){
             $type = HermitEvent::EVT_DELETE;
         } else {
             $type = HermitEvent::EVT_SELECT;
         }
-        $this->resume($tx, $methodName, $type);
+        $this->resume($tx, $name, $type);
         if(HermitEvent::isRead($type)){
-            $callable = array($this->proxy, $this->methodName);
-            return call_user_func($callable, $name, $parameters);
+            return $this->proxy->request($name, $parameters);
         }
         $callable = array($this->target, $this->methodName);
         return call_user_func($callable, $this->proxy, $name, $parameters);
