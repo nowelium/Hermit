@@ -11,7 +11,7 @@ final class HermitQueueRecord {
     }
     public function __destruct(){
         try {
-            if($this->completed){
+            if(!$this->completed){
                 $this->queue->abort();
             }
         } catch(Exception $e){
