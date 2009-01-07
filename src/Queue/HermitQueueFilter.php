@@ -23,6 +23,9 @@ class HermitQueueFilter implements Iterator {
     }
     public function current(){
         $current = $this->queue->current();
+        if(null === $current){
+            throw new RuntimeException('fetch queue row was null');
+        }
         if(0 === strcmp(self::QUEUE_FOUND, $current)){
             return new HermitQueueRecord($this->queue);
         }

@@ -10,8 +10,6 @@ class HermitCallableTxProxy extends HermitCallableProxy {
         $this->context = $ctx;
     }
     public function request($name, array $parameters){
-        $tx = $this->target;
-
         $type = HermitEvent::UNKNOWN;
         if(HermitNamingUtils::isProcedure($name)){
             $type = HermitEvent::EVT_PROCEDURE;
@@ -24,11 +22,10 @@ class HermitCallableTxProxy extends HermitCallableProxy {
         } else {
             $type = HermitEvent::EVT_SELECT;
         }
+
+        $tx = $this->target;
         $this->resume($tx, $name, $type);
-        if(HermitEvent::isRead($type)){
-            return $this->proxy->request($name, $parameters);
-        }
-        $callable = array($this->target, $this->methodName);
+        $callable = array($tx, $this->methodName);
         return call_user_func($callable, $this->proxy, $name, $parameters);
     }
     protected function resume(HermitTx $tx, $methodName, $type){
