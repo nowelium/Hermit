@@ -4,6 +4,12 @@
  * @author nowelium
  */
 abstract class HermitSqlParameter {
+    const MONO_MATCHED = '__mono_matched__';
+    const MONO_UNMATCH = '__mono_unmatch__';
+    const BINO_TRUE_MATCHED = '__bino_true_matched__';
+    const BINO_FALSE_MATCHED = '__bino_false_matched__';
+    const BINO_UNMATCH = '__bino_unmatch__';
+    
     protected $targetClass;
     protected $targetMethod;
     protected $inputParameters = array();

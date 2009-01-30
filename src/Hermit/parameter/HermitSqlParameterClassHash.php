@@ -26,6 +26,9 @@ class HermitSqlParameterClassHash extends HermitSqlParameterHash {
                             $method = $this->reflector->getMethod($methodName);
                             $v = $method->invoke($obj);
                         } else {
+                            if(!isset($obj->$key)){
+                                continue;
+                            }
                             $v = $obj->$key;
                         }
                     }
@@ -45,6 +48,9 @@ class HermitSqlParameterClassHash extends HermitSqlParameterHash {
                         $method = $this->reflector->getMethod($methodName);
                         $stmt->bindValue(':' . $key, $method->invoke($obj));
                     } else {
+                        if(!isset($obj->$key)){
+                            continue;
+                        }
                         $stmt->bindValue(':' . $key, $obj->$key);
                     }
                 }

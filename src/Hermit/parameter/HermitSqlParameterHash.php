@@ -46,10 +46,10 @@ class HermitSqlParameterHash extends HermitSqlParameter {
                     if(false === strpos($expression, $propertyName)){
                         continue;
                     }
-                    $namedValue = self::makeExpression($value->$propertyName);
+                    $namedValue = self::makeExpression($property->getValue($value));
                     $expression = strtr($expression, array($propertyName => $namedValue));
                     if(eval('return ' . $expression . ';')){
-                        return $statement;
+                        return self::MONO_MATCHED;
                     }
                 }
             } else {
@@ -59,11 +59,11 @@ class HermitSqlParameterHash extends HermitSqlParameter {
                 $value = self::makeExpression($value);
                 $expression = strtr($expression, array($name => $value));
                 if(eval('return ' . $expression . ';')){
-                    return $statement;
+                    return self::MONO_MATCHED;
                 }
             }
         }
-        return '';
+        return self::MONO_UNMATCH;
     }
     public function binoCreate($expression, $trueStatement, $falseStatement, $parameterValue){
         foreach($this->names as $name => $pos){
@@ -81,7 +81,6 @@ class HermitSqlParameterHash extends HermitSqlParameter {
                         continue;
                     }
                     $namesValue = self::makeExpression($value->$propertyName);
-                    
                     $expression = strtr($expression, array($propertyName => $namesValue));
                     if(eval('return ' . $expression . ';')){
                         $expression = $statement;
@@ -94,13 +93,12 @@ class HermitSqlParameterHash extends HermitSqlParameter {
                 $value = self::makeExpression($parameterValue[$pos]);
                 $expression = strtr($expression, array($name => $value));
                 if(eval('return ' . $expression . ';')){
-                    $expression = $trueStatement;
-                } else {
-                    $expression = $falseStatement;
+                    return self::BINO_TRUE_MATCHED;
                 }
+                return self::BINO_FALSE_MATCHED;
             }
         }
-        return $expression;
+        return self::BINO_UNMATCH;
     }
     
     protected static function makeExpression($value){
@@ -109,6 +107,12 @@ class HermitSqlParameterHash extends HermitSqlParameter {
         }
         if(is_string($value)){
             return '\'' . $value . '\'';
+        }
+        if(is_bool($value)){
+            if(true === $value){
+                return 'true';
+            }
+            return 'false';
         }
         return $value;
     }

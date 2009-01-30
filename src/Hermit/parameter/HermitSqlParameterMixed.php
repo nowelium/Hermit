@@ -18,7 +18,12 @@ class HermitSqlParameterMixed extends HermitSqlParameter {
         return false;
     }
     public function replace($key, $name, $defaultValue){
-        return $this->parameters[$this->index++]->replace($key, $name, $defaultValue);
+        foreach($this->parameters as $param){
+            if($param->hasParameter($name)){
+                return $param->replace($key, $name, $defaultValue);
+            }
+        }
+        return $defaultValue;
     }
     public function bind(PDOStatement $stmt, $value){
         if(!is_array($value)){
@@ -33,14 +38,23 @@ class HermitSqlParameterMixed extends HermitSqlParameter {
     
     public function monoCreate($expression, $statement, $parameterValue){
         foreach($this->parameters as $param){
-            $expression = $param->monoCreate($expression, $statement, $parameterValue);
+            $result = $param->monoCreate($expression, $statement, $parameterValue);
+            if(self::MONO_MATCHED === $result){
+                return $result;
+            }
         }
-        return $expression;
+        return self::MONO_UNMATCH;
     }
     public function binoCreate($expression, $trueStatement, $falseStatement, $parameterValue){
         foreach($this->parameters as $param){
-            $expression = $param->binoCreate($expression, $trueStatement, $falseStatement, $parameterValue);
+            $result = $param->binoCreate($expression, $trueStatement, $falseStatement, $parameterValue);
+            if(self::BINO_TRUE_MATCHED === $result){
+                return $result;
+            }
+            if(self::BINO_FALSE_MATCHED === $result){
+                return $result;
+            }
         }
-        return $expression;
+        return self::BINO_UNMATCH;
     }
 }
