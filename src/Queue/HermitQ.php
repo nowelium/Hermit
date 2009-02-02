@@ -7,7 +7,7 @@ class HermitQ extends Hermit implements Iterator {
     const DEFAULT_QUEUE_TIMEOUT = 10;
     protected $queue;
     protected $iterator;
-    protected $delegate;
+    protected $filter;
     public function __construct($targetClass, $timeout = self::DEFAULT_QUEUE_TIMEOUT){
         $hermit = new parent($targetClass);
         $it = new HermitQueueIterator($hermit);
@@ -20,7 +20,15 @@ class HermitQ extends Hermit implements Iterator {
         $this->queue = $hermit;
         $this->iterator = $it;
         $this->filter = new HermitQueueFilter($it);
+        
+        register_shutdown_function(array($this, '__destruct'));
     }
+    public function __destruct(){
+        unset($this->filter);
+        unset($this->iterator);
+        unset($this->queue);
+    }
+    
     public function rewind(){
         return $this->filter->rewind();
     }

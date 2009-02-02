@@ -11,6 +11,9 @@ class HermitQueueIterator implements HermitQueue, Iterator {
     public function __construct(Hermit $hermit){
         $this->hermit = $hermit;
     }
+    public function __destruct(){
+        unset($this->hermit);
+    }
     public function setTable($table){
         $this->table = $table;
     }

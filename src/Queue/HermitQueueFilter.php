@@ -15,6 +15,9 @@ class HermitQueueFilter implements Iterator {
     public function __construct(HermitQueueIterator $queue){
         $this->queue = $queue;
     }
+    public function __destruct(){
+        unset($this->queue);
+    }
     public function rewind(){
         $this->queue->rewind();
     }
