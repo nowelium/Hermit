@@ -20,6 +20,9 @@ class HermitSelectSqlCommandFactory implements HermitCommandFactory {
         }
         $valueType = HermitValueTypeFactory::create($this->annote, $this->method);
         
+        $batchMode = $this->annote->getBatchMode($this->method);
+        $context->setBatchMode($batchMode);
+        
         $command = new HermitSelectCommand;
         $command->setContext($context);
         $command->setMethod($this->method);

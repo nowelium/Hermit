@@ -17,6 +17,9 @@ class HermitProcedureSqlCommandFactory implements HermitCommandFactory {
         $creator->initialize($pdo, $this->method, $this->annote);
         $valueType = HermitValueTypeFactory::create($this->annote, $this->method);
 
+        $batchMode = $this->annote->getBatchMode($this->method);
+        $context->setBatchMode($batchMode);
+        
         $command = new HermitProcedureCommand;
         $command->setContext($context);
         $command->setMethod($this->method);

@@ -5,6 +5,7 @@
  */
 class HermitContext {
     protected $reflector;
+    protected $batchMode = false;
     public function __construct(ReflectionClass $reflector){
         $this->reflector = $reflector;
     }
@@ -16,5 +17,11 @@ class HermitContext {
     }
     public function getTargetClass(){
         return $this->reflector;
+    }
+    public function setBatchMode($mode){
+        $this->batchMode = $mode;
+    }
+    public function isBatchMode(){
+        return $this->batchMode;
     }
 }

@@ -15,6 +15,9 @@ class HermitDeleteSqlCommandFactory extends AbstractHermitUpdateSqlCommandFactor
         }
         $valueType = HermitValueTypeFactory::create($this->annote, $this->method);
         
+        $batchMode = $this->annote->getBatchMode($this->method);
+        $context->setBatchMode($batchMode);
+        
         $command = new HermitDeleteCommand;
         $command->setContext($context);
         $command->setMethod($this->method);

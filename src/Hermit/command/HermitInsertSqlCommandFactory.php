@@ -12,6 +12,9 @@ class HermitInsertSqlCommandFactory extends AbstractHermitUpdateSqlCommandFactor
         $sqlCreator->initialize($pdo, $this->method, $this->annote);
         $valueType = HermitValueTypeFactory::create($this->annote, $this->method);
         
+        $batchMode = $this->annote->getBatchMode($this->method);
+        $context->setBatchMode($batchMode);
+        
         $command = new HermitInsertCommand;
         $command->setContext($context);
         $command->setMethod($this->method);

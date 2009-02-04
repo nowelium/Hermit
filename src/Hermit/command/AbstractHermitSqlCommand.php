@@ -8,6 +8,7 @@ abstract class AbstractHermitSqlCommand implements HermitSqlCommand {
     protected $method;
     protected $sqlCreator;
     protected $type;
+    protected $statement;
     public function setContext(HermitContext $ctx){
         $this->context = $ctx;
     }

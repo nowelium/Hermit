@@ -13,6 +13,7 @@ class HermitAnnoteConst extends HermitAnnote {
     const FILE_SUFFIX = '_FILE';
     const PROCEDURE_SUFFIX = '_PROCEDURE';
     const VALUE_TYPE_SUFFIX = '_VALUE_TYPE';
+    const BATCH_MODE_SUFFIX = '_BATCH_MODE';
     const CHECK_SINGLE_ROW_UPDATE = 'CHECK_SINGLE_ROW_UPDATE';
     
     const DEFAULT_PREFIX = 'default';
@@ -118,6 +119,13 @@ class HermitAnnoteConst extends HermitAnnote {
             return self::getClassAnnotation($this->reflector, self::DEFAULT_PREFIX . self::VALUE_TYPE_SUFFIX);
         }
         return $valueType;
+    }
+    public function getBatchMode(ReflectionMethod $method){
+        $batchMode = self::getMethodAnnotation($this->reflector, $method, self::BATCH_MODE_SUFFIX);
+        if(null === $batchMode){
+            return self::getClassAnnotation($this->reflector, self::DEFAULT_PREFIX . self::BATCH_MODE_SUFFIX);
+        }
+        return $batchMode;
     }
     public function getColumns(){
         $columns = $this->reflector->getConstant(self::COLUMNS_KEY);

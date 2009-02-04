@@ -6,10 +6,20 @@
 class HermitDeleteCommand extends AbstractHermitSqlCommand {
     public function execute(array $parameters){
         $pdo = $this->getConnection(HermitEvent::EVT_DELETE);
-        $builder = new HermitStatementBuilder($this->context->getTargetClass(), $this->method, $this->sqlCreator);
-        $stmt = $builder->build($pdo, $parameters);
-        $stmt->execute($parameters);
+        $genStmt = false;
+        if(null === $this->statement){
+            $genStmt = true;
+        } else {
+            if(!$this->context->isBatchMode()){
+                $genStmt = true;
+            }
+        }
+        if($genStmt){
+            $builder = new HermitStatementBuilder($this->context->getTargetClass(), $this->method, $this->sqlCreator);
+            $this->statement = $builder->build($pdo, $parameters);
+        }
+        $this->statement->execute($parameters);
         $resultset = new HermitUpdateQueryResultSet;
-        return $resultset->execute($stmt, $this->type);
+        return $resultset->execute($this->statement, $this->type);
     }
 }
