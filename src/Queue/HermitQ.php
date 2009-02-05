@@ -8,6 +8,7 @@ class HermitQ extends Hermit implements Iterator {
     protected $queue;
     protected $iterator;
     protected $filter;
+    protected $logger;
     public function __construct($targetClass, $timeout = self::DEFAULT_QUEUE_TIMEOUT){
         $hermit = new parent($targetClass);
         $it = new HermitQueueIterator($hermit);
@@ -20,6 +21,7 @@ class HermitQ extends Hermit implements Iterator {
         $this->queue = $hermit;
         $this->iterator = $it;
         $this->filter = new HermitQueueFilter($it);
+        $this->logger = HermitLoggerManager::getLogger();
         
         register_shutdown_function(array($this, '__destruct'));
     }
@@ -27,9 +29,15 @@ class HermitQ extends Hermit implements Iterator {
         unset($this->filter);
         unset($this->iterator);
         unset($this->queue);
+        if($this->logger->isDebugEnabled()){
+            $this->logger->debug(__CLASS__ . 'stoped {%s}', date('c'));
+        }
     }
     
     public function rewind(){
+        if($this->logger->isDebugEnabled()){
+            $this->logger->debug(__CLASS__ . 'started {%s}', date('c'));
+        }
         return $this->filter->rewind();
     }
     public function key(){
