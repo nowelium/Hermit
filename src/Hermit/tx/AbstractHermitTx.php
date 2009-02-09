@@ -54,7 +54,7 @@ abstract class AbstractHermitTx implements HermitTx {
                     return $rule->complete();
                 }
             } catch(Exception $e1){
-                throw new HermitTxException($e->getMessage(), $e->getCode());
+                throw new HermitTxException($e1->getMessage(), $e1->getCode());
             }
         }
         $this->rollback();
