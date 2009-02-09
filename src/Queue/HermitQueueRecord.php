@@ -11,12 +11,13 @@ final class HermitQueueRecord {
     }
     public function __destruct(){
         try {
-            if(!$this->completed){
+            if(!$this->completed && isset($this->queue)){
                 $this->queue->abort();
             }
         } catch(Exception $e){
             echo $e->getMessage(), PHP_EOL;
             echo $e->getTraceAsString(), PHP_EOL;
+            throw $e;
         }
     }
     public function complete(){

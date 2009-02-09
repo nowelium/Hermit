@@ -30,13 +30,13 @@ class HermitQ extends Hermit implements Iterator {
         unset($this->iterator);
         unset($this->queue);
         if($this->logger->isDebugEnabled()){
-            $this->logger->debug(__CLASS__ . 'stoped {%s}', date('c'));
+            $this->logger->debug('[%s] has stoped {%s}', __CLASS__, date('c'));
         }
     }
     
     public function rewind(){
         if($this->logger->isDebugEnabled()){
-            $this->logger->debug(__CLASS__ . 'started {%s}', date('c'));
+            $this->logger->debug('[%s] has started {%s}', __CLASS__, date('c'));
         }
         return $this->filter->rewind();
     }

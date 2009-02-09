@@ -19,13 +19,13 @@ class HermitQueueFilter implements Iterator {
     }
     public function __destruct(){
         if($this->logger->isDebugEnabled()){
-            $this->logger->debug('queue stoped {%s}', date('c'));
+            $this->logger->debug('[%s] queue stoped {%s}', __CLASS__, date('c'));
         }
         unset($this->queue);
     }
     public function rewind(){
         if($this->logger->isDebugEnabled()){
-            $this->logger->debug('queue started {%s}', date('c'));
+            $this->logger->debug('[%s] queue started {%s}', __CLASS__, date('c'));
         }
         $this->queue->rewind();
     }
@@ -34,11 +34,11 @@ class HermitQueueFilter implements Iterator {
     }
     public function current(){
         if($this->logger->isDebugEnabled()){
-            $this->logger->debug('fetch queue %d. {%s}', $this->key(), date('c'));
+            $this->logger->debug('[%s] fetch queue %d. {%s}', __CLASS__, $this->key(), date('c'));
         }
         $current = $this->queue->current();
         if(null === $current){
-            throw new RuntimeException(__CLASS__ . ' row was null');
+            throw new RuntimeException('[' . __CLASS__ . '] row was null');
         }
         if(0 === strcmp(self::QUEUE_FOUND, $current)){
             return new HermitQueueRecord($this->queue);
