@@ -34,6 +34,13 @@ class HermitQ extends Hermit implements Iterator {
         }
     }
     
+    public function getFilter(){
+        return $this->filter;
+    }
+    public function getIterator(){
+        return $this->iterator;
+    }
+
     public function rewind(){
         if($this->logger->isDebugEnabled()){
             $this->logger->debug('[%s] has started {%s}', __CLASS__, date('c'));

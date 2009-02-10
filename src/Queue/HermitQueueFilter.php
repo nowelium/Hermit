@@ -13,6 +13,8 @@ class HermitQueueFilter implements Iterator {
     
     protected $queue;
     protected $logger;
+    protected $nextHook;
+    
     public function __construct(HermitQueueIterator $queue){
         $this->queue = $queue;
         $this->logger = HermitLoggerManager::getLogger();
@@ -23,6 +25,11 @@ class HermitQueueFilter implements Iterator {
         }
         unset($this->queue);
     }
+    
+    public function setNextHook(array $callback){
+        $this->nextHook = $callback;
+    }
+    
     public function rewind(){
         if($this->logger->isDebugEnabled()){
             $this->logger->debug('[%s] queue started {%s}', __CLASS__, date('c'));
@@ -33,20 +40,22 @@ class HermitQueueFilter implements Iterator {
         return $this->queue->key();
     }
     public function current(){
-        if($this->logger->isDebugEnabled()){
-            $this->logger->debug('[%s] fetch queue %d. {%s}', __CLASS__, $this->key(), date('c'));
+        while(true){
+            if($this->logger->isDebugEnabled()){
+                $this->logger->debug('[%s] fetch queue %d. {%s}', __CLASS__, $this->key(), date('c'));
+            }
+            $current = $this->queue->current();
+            if(null === $current){
+                throw new RuntimeException('[' . __CLASS__ . '] row was null');
+            }
+            if(0 === strcmp(self::QUEUE_FOUND, $current)){
+                return new HermitQueueRecord($this->queue);
+            }
+            $this->next();
         }
-        $current = $this->queue->current();
-        if(null === $current){
-            throw new RuntimeException('[' . __CLASS__ . '] row was null');
-        }
-        if(0 === strcmp(self::QUEUE_FOUND, $current)){
-            return new HermitQueueRecord($this->queue);
-        }
-        $this->next();
-        return $this->current();
     }
     public function next(){
+        call_user_func_array($this->nextHook, array($this));
         return $this->queue->next();
     }
     public function valid(){
