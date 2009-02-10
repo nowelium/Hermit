@@ -30,7 +30,9 @@ class HermitQueueIterator implements HermitQueue, Iterator {
         return $this->hermit->end($this->table);
     }
     public function abort(){
-        return $this->hermit->abort();
+        if(null !== $this->hermit){
+            return $this->hermit->abort();
+        }
     }
     public function rewind(){
         $this->index = 0;

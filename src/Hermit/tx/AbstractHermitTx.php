@@ -20,7 +20,7 @@ abstract class AbstractHermitTx implements HermitTx {
             }
         } catch(Exception $e){
             // TODO: Nest transaction
-            throw new HermitTxException($e->getMessage(), $e->getCode());
+            throw new HermitTxException($e->getMessage());
         }
     }
     public final function commit(){
