@@ -13,7 +13,6 @@ class HermitQueueFilter implements Iterator {
     
     protected $queue;
     protected $logger;
-    protected $nextHook;
     
     public function __construct(HermitQueueIterator $queue){
         $this->queue = $queue;
@@ -24,10 +23,6 @@ class HermitQueueFilter implements Iterator {
             $this->logger->debug('[%s] queue stoped {%s}', __CLASS__, date('c'));
         }
         unset($this->queue);
-    }
-    
-    public function setNextHook(array $callback){
-        $this->nextHook = $callback;
     }
     
     public function rewind(){
@@ -55,7 +50,6 @@ class HermitQueueFilter implements Iterator {
         }
     }
     public function next(){
-        call_user_func_array($this->nextHook, array($this));
         return $this->queue->next();
     }
     public function valid(){
