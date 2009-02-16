@@ -17,8 +17,14 @@ class HermitQueueIterator implements HermitQueue, Iterator {
     public function setTable($table){
         $this->table = $table;
     }
+    public function getTable(){
+        return $this->table;
+    }
     public function setTimeout($timeout){
         $this->timeout = $timeout;
+    }
+    public function getTimeout(){
+        return $this->timeout;
     }
     public function fetch(){
         return $this->hermit->get();

@@ -3,7 +3,7 @@
 /**
  * @author nowelium
  */
-final class HermitQueueRecord {
+class HermitQueueRecord {
     private $queue;
     private $completed = false;
     public function __construct(HermitQueue $queue){
@@ -23,6 +23,10 @@ final class HermitQueueRecord {
     public function complete(){
         $this->completed = true;
         return $this->queue->end();
+    }
+    public function abort(){
+        $this->completed = false;
+        return $this->queue->abort();
     }
     public function get(){
         return $this->queue->fetch();
