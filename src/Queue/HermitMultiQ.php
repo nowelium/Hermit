@@ -9,25 +9,25 @@ class HermitMultiQ extends Hermit implements Iterator {
     protected $filter;
     public function __construct(array $targetDaoList, $timeout = self::DEFAULT_QUEUE_TIMEOUT){
         $tables = array();
-        $list = array();
+        $hermits = array();
         foreach($targetDaoList as $daoName){
-            $hermit = new Hermit($daoName);
+            $hermit = new parent($daoName);
             $reflector = $hermit->context->getTargetClass();
             if(!$reflector->hasConstant('TABLE')){
                 throw new RuntimeException($hermit->context->getName() . ' has not constant "TABLE"');
             }
             $tables[] = $reflector->getConstant('TABLE');
-            $list[] = $hermit;
+            $hermits[] = $hermit;
         }
         $iterator = new HermitMultiQueueIterator(new Hermit('HermitQueueMultiDao'));
         $iterator->setTable($tables);
         $iterator->setTimeout($timeout);
         
-        $filter = new HermitMultiQueueFilter;
-        $filter->setHermits($list);
+        $filter = new HermitMultiQueueFilter($iterator);
+        $filter->setHermits($hermits);
         
         $this->iterator = $iterator;
-        $this->filter = new HermitMultiQueueFilter($iterator);
+        $this->filter = $filter;
     }
     public function __destruct(){
         unset($this->filter);
