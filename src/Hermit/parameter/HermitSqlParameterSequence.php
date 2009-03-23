@@ -4,10 +4,15 @@
  * @author nowelium
  */
 class HermitSqlParameterSequence extends HermitSqlParameterHash {
+    const key_prefix = ':seq_';
     public function replace($key, $name, $defaultValue){
         $inputParams = $this->getInputParameters();
         $index = $this->names[$name];
-        return join(',', array_fill(0, count($inputParams[$index]), '?'));
+        $bindKeys = array();
+        for($i = 0; $i < count($inputParams[$index]); ++$i){
+            $bindKeys[] = self::key_prefix . $name . $i;
+        }
+        return join(',', $bindKeys);
     }
     public function bind(PDOStatement $stmt, $value){
         $logger = HermitLoggerManager::getLogger();
@@ -18,10 +23,10 @@ class HermitSqlParameterSequence extends HermitSqlParameterHash {
             }
             $logger->debug('{%s} statement binds parameter {:index => param} = %s', __CLASS__, $buf);
         }
-        $index = 0;
         foreach($this->names as $name => $pos){
+            $index = 0;
             foreach($value[$pos] as $v){
-                $stmt->bindValue($pos + (++$index), $v);
+                $stmt->bindValue(self::key_prefix . $name . ($index++), $v);
             }
         }
     }
