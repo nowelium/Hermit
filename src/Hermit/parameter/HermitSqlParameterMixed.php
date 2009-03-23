@@ -18,7 +18,9 @@ class HermitSqlParameterMixed extends HermitSqlParameter {
         return false;
     }
     public function replace($key, $name, $defaultValue){
-        foreach($this->parameters as $param){
+        $inputParameters = $this->getInputParameters();
+        foreach($this->parameters as $index => $param){
+            $param->setInputParameters($inputParameters);
             if($param->hasParameter($name)){
                 return $param->replace($key, $name, $defaultValue);
             }
