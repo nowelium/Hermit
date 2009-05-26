@@ -34,10 +34,6 @@ class HermitMultiQ extends Hermit implements Iterator {
         unset($this->iterator);
     }
     
-    public function setReleaseConnection(array $callback){
-        $this->filter->releaseConnection($callback);
-    }
-    
     public function rewind(){
         return $this->filter->rewind();
     }
