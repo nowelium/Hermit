@@ -5,6 +5,7 @@
  */
 abstract class HermitQueryUtils {
     public static function addQuery($sql, $query){
+        $appended = false;
         $buf = '';
         if(false === stripos($sql, 'WHERE')){
             $buf .= ' ';
@@ -18,12 +19,13 @@ abstract class HermitQueryUtils {
                 $buf .= ' ';
                 $buf .= '1 = 1';
                 $buf .= ' ';
+                $appended = true;
             }
         }
         //
         // query has not (AND | OR)
         //
-        if(!preg_match('/^(\s)*(AND|OR)/i', $query)){
+        if($appended && !preg_match('/^(\s)*(AND|OR)/i', $query)){
             $buf .= ' ';
             $buf .= 'AND';
             $buf .= ' ';
