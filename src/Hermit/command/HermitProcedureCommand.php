@@ -22,7 +22,7 @@ class HermitProcedureCommand extends AbstractHermitSqlCommand {
         $builder = new HermitProcedureStatementBuilder($targetClass, $this->method, $this->annote, $this->sqlCreator);
         $stmt = $builder->build($pdo, $parameters);
         $stmt->execute($parameters);
-        $rs = HermitProcedureResultSetFactory::create($pdo, $stmt->getSqlParameter());
+        $rs = HermitProcedureResultSetFactory::create($pdo, $this->method, $this->annote, $stmt->getSqlParameter());
 //
 //        to pdo_mysql cause: Fatal error: Uncaught exception 'PDOException' with message 'SQLSTATE[HY000]: General error: 2014 Cannot execute queries while other unbuffered queries are active.
 //        if($rs instanceof HermitParameterBind){

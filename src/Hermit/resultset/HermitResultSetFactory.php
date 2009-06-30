@@ -9,6 +9,10 @@ abstract class HermitResultSetFactory {
         '/Count$/i' => 'HermitCountResultSet',
         '/Iterator$/i' => 'HermitIteratorResultSet'
     );
+    /**
+     * @param ReflectionMethod $method
+     * @return HermitResultSet
+     */
     public static function create(ReflectionMethod $method){
         $name = $method->getName();
         foreach(self::$resultset as $regex => $value){

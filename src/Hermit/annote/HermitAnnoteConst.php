@@ -12,6 +12,7 @@ class HermitAnnoteConst extends HermitAnnote {
     const ORDER_SUFFIX = '_ORDER';
     const FILE_SUFFIX = '_FILE';
     const PROCEDURE_SUFFIX = '_PROCEDURE';
+    const PROCEDURE_RESULT_SUFFIX = '_PROCEDURE_RESULT';
     const VALUE_TYPE_SUFFIX = '_VALUE_TYPE';
     const BATCH_MODE_SUFFIX = '_BATCH_MODE';
     const CHECK_SINGLE_ROW_UPDATE = 'CHECK_SINGLE_ROW_UPDATE';
@@ -130,5 +131,12 @@ class HermitAnnoteConst extends HermitAnnote {
     public function getColumns(){
         $columns = $this->reflector->getConstant(self::COLUMNS_KEY);
         return array_map('trim', explode(',', $columns));
+    }
+    public function isSingleProcedureResult(ReflectionMethod $method){
+        $procedureResult = self::getMethodAnnotation($this->reflector, $method, self::PROCEDURE_RESULT_SUFFIX);
+        if(null === $procedureResult){
+            return false;
+        }
+        return 0 === strcasecmp('single', trim($procedureResult));
     }
 }

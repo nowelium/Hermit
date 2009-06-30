@@ -4,8 +4,21 @@
  * @author nowelium
  */
 class HermitProcedureResultSet implements HermitResultSet {
+    /**
+     * @var ReflectionMethod
+     */
+    protected $method;
+    /**
+     * @var HermitAnnote
+     */
+    protected $annote;
+    /**
+     * @var HermitProcedureParameter
+     */
     protected $procParameter;
-    public function __construct(HermitProcedureParameter $procParameter){
+    public function __construct(ReflectionMethod $method, HermitAnnote $annote, HermitProcedureParameter $procParameter){
+        $this->method = $method;
+        $this->annote = $annote;
         $this->procParameter = $procParameter;
     }
     public function execute(HermitStatement $stmt, HermitValueType $type){
@@ -14,38 +27,19 @@ class HermitProcedureResultSet implements HermitResultSet {
             unset($stmt);
             return null;
         }
-        $type->apply($stmt);
+        
+        //
+        // check single result
+        //
+        if($this->annote->isSingleProcedureResult($this->method)){
+            $resultset = HermitResultSetFactory::create($this->method);
+            return $resultset->execute($stmt, $type);
+        }
 
-//        $rows = array();
-//        while($row = $stmt->fetch()){
-//            $rows[] = $row;
-//        }
-//        if(!$stmt->nextRowset()){
-//            return $rows;
-//        }
-//
-//        $results = array();
-//        $results[] = $rows;
-//        do {
-//            $rows = array();
-//            while($row = $stmt->fetch()){
-//                $rows[] = $row;
-//            }
-//            $results[] = $rows;
-//        } while($stmt->nextRowset());
-//
-//        $stmt->closeCursor();
-//        unset($stmt);
-//        return $results;
-
-        // multiresult so always to array[array]
+        $resultset = HermitResultSetFactory::create($this->method);
         $results = array();
         do {
-            $rows = array();
-            while($row = $stmt->fetch()){
-                $rows[] = $row;
-            }
-            $results[] = $rows;
+            $results[] = $resultset->execute($stmt, $type);
         } while($stmt->nextRowset());
         
         $stmt->closeCursor();

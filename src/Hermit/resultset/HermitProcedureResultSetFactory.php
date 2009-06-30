@@ -10,15 +10,18 @@ abstract class HermitProcedureResultSetFactory {
     private function __construct(){
         // nop
     }
-    public static function create(PDO $pdo, HermitProcedureParameter $parameter){
+    
+    /**
+     * @param PDO $pdo
+     * @param HermitProcedureParameter $parameter
+     * @return HermitResultSet
+     */
+    public static function create(PDO $pdo, ReflectionMethod $method, HermitAnnote $annote, HermitProcedureParameter $parameter){
         $dbms = HermitDatabaseMetaFactory::getDbms($pdo);
-        $rs = null;
         if(isset(self::$resultsets[$dbms])){
             $className = self::$resultsets[$dbms];
-            $rs = new $className($parameter);
-        } else {
-            $rs = new HermitProcedureResultSet($parameter);
+            return new $className($method, $annote, $parameter);
         }
-        return $rs;
+        return new HermitProcedureResultSet($method, $annote, $parameter);
     }
 }
