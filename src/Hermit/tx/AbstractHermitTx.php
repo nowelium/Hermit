@@ -11,7 +11,21 @@ abstract class AbstractHermitTx implements HermitTx {
         if($this->begin){
             return true;
         }
-        return $this->begin = $this->connection->beginTransaction();
+        try {
+            return $this->begin = $this->connection->beginTransaction();
+        } catch(Exception $e){
+            //
+            // FIXME: PDO already transaction
+            // pdo_dbh.c:602
+            // if (dbh->in_txn) {
+            //   zend_throw_exception_ex(php_pdo_get_exception(), 0 TSRMLS_CC, "There is already an active transaction");
+            //
+            //
+            if(0 === strcasecmp('There is already an active transaction', $e->getMessage())){
+                return $this->begin = true;
+            }
+            throw $e;
+        }
     }
     public final function begin(){
         try {

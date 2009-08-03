@@ -6,6 +6,7 @@
 class HermitTransactionManager implements HermitBehaviorWrapper {
     protected static $instance;
     protected $transactionScripts = array();
+    protected $transactionProxy = array();
     protected $proxyClass = 'HermitCallableTxProxy';
     private function __construct(){
         // nop
@@ -22,14 +23,11 @@ class HermitTransactionManager implements HermitBehaviorWrapper {
     public static function set($targetClass, HermitTx $tx){
         $instance = self::getInstance();
         $instance->transactionScripts[$targetClass] = $tx;
+        $instance->transactionProxy[$targetClass] = $instance->proxyClass;
     }
     public static function get($targetClass){
         $instance = self::getInstance();
         return $instance->getTransactionScript($targetClass);
-    }
-    public static function setProxyClass($className){
-        $instance = self::getInstance();
-        $instance->proxyClass = $className;
     }
     public function has($targetClass){
         $instance = self::getInstance();
@@ -43,9 +41,8 @@ class HermitTransactionManager implements HermitBehaviorWrapper {
     }
     public function createProxy(HermitContext $ctx, HermitProxy $proxy){
         $instance = self::getInstance();
-        $proxyClass = $instance->proxyClass;
         $targetClass = $ctx->getName();
-        $tx = $instance->getTransactionScript($targetClass);
-        return new $proxyClass($ctx, $proxy, $tx, 'proceed');
+        $proxyClass = $instance->transactionProxy[$targetClass];
+        return new $proxyClass($ctx, $proxy, $instance, 'proceed');
     }
 }

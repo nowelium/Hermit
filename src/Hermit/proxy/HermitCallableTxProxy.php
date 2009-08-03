@@ -3,30 +3,22 @@
 /**
  * @author nowelium
  */
-class HermitCallableTxProxy extends HermitCallableProxy {
+class HermitCallableTxProxy implements HermitProxy {
     protected $context;
-    public function __construct(HermitContext $ctx, HermitProxy $proxy, HermitTx $target, $methodName){
-        parent::__construct($proxy, $target, $methodName);
+    protected $proxy;
+    protected $txManager;
+    protected $methodName;
+    public function __construct(HermitContext $ctx, HermitProxy $proxy, HermitTransactionManager $txManager, $methodName){
         $this->context = $ctx;
+        $this->proxy = $proxy;
+        $this->txManager = $txManager;
+        $this->methodName = $methodName;
     }
     public function request($name, array $parameters){
-        $type = HermitEvent::UNKNOWN;
-        if(HermitNamingUtils::isProcedure($name)){
-            $type = HermitEvent::EVT_PROCEDURE;
-        } else if(HermitNamingUtils::isInsert($name)){
-            $type = HermitEvent::EVT_INSERT;
-        } else if(HermitNamingUtils::isUpdate($name)){
-            $type = HermitEvent::EVT_UPDATE;
-        } else if(HermitNamingUtils::isDelete($name)){
-            $type = HermitEvent::EVT_DELETE;
-        } else {
-            $type = HermitEvent::EVT_SELECT;
-        }
-
-        $tx = $this->target;
+        $type = self::getEventType($name);
+        $tx = $this->txManager->get($this->context->getName());
         $this->resume($tx, $name, $type);
-        $callable = array($tx, $this->methodName);
-        return call_user_func($callable, $this->proxy, $name, $parameters);
+        return call_user_func(array($tx, $this->methodName), $this->proxy, $name, $parameters);
     }
     protected function resume(HermitTx $tx, $methodName, $type){
         return $tx->resume($this->getDataSource($methodName, $type));
@@ -34,5 +26,20 @@ class HermitCallableTxProxy extends HermitCallableProxy {
     protected function getDataSource($methodName, $type){
         $target = $this->context->getName();
         return HermitDataSourceManager::get($target, $methodName, $type);
+    }
+    protected static function getEventType($methodName){
+        if(HermitNamingUtils::isProcedure($methodName)){
+            return HermitEvent::EVT_PROCEDURE;
+        }
+        if(HermitNamingUtils::isInsert($methodName)){
+            return HermitEvent::EVT_INSERT;
+        }
+        if(HermitNamingUtils::isUpdate($methodName)){
+            return HermitEvent::EVT_UPDATE;
+        }
+        if(HermitNamingUtils::isDelete($methodName)){
+            return HermitEvent::EVT_DELETE;
+        }
+        return HermitEvent::EVT_SELECT;
     }
 }
