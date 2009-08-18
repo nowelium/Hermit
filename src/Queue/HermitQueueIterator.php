@@ -33,7 +33,7 @@ class HermitQueueIterator implements HermitQueue, Iterator {
         return $this->hermit->wait($this->table, $this->timeout);
     }
     public function end(){
-        return $this->hermit->end($this->table);
+        return $this->hermit->end();
     }
     public function abort(){
         if(null !== $this->hermit){

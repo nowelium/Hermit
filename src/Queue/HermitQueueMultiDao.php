@@ -9,7 +9,7 @@ interface HermitQueueMultiDao {
     public function wait(array $multival);
     
     const end_SQL = HermitQueueDao::end_SQL;
-    public function end($table);
+    public function end();
     
     const abort_SQL = HermitQueueDao::abort_SQL;
     public function abort();

@@ -34,7 +34,7 @@ abstract class AbstractHermitTx implements HermitTx {
             }
         } catch(Exception $e){
             // TODO: Nest transaction
-            throw new HermitTxException($e->getMessage());
+            throw new HermitTxException($e->getMessage(), $e->getCode());
         }
     }
     public final function commit(){

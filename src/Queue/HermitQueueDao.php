@@ -8,8 +8,8 @@ interface HermitQueueDao {
     const wait_VALUE_TYPE = 'NUM';
     public function wait($table, $timeout);
     
-    const end_SQL = 'SELECT queue_end(/*table*/"table")';
-    public function end($table);
+    const end_SQL = 'SELECT queue_end()';
+    public function end();
     
     const abort_SQL = 'SELECT queue_abort()';
     public function abort();
