@@ -8,7 +8,7 @@ class HermitSqliteDatabaseMeta implements HermitDatabaseMeta {
     const TABLE_INFO_SQL = 'PRAGMA table_info(%s)';
     private $tables = array();
     private $pdo;
-    public function __construct(PDO $pdo){
+    public function initConnection(PDO $pdo){
         $this->pdo = $pdo;
     }
     public function getTableInfo($table){

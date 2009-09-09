@@ -21,9 +21,12 @@ abstract class HermitDatabaseMetaFactory {
             throw new RuntimeException('unsupported driver: ' . $driver);
         }
         if(isset(self::$cache[$driver])){
-            return self::$cache[$driver];
+            $dbmeta = self::$cache[$driver];
+            $dbmeta->initConnection($pdo);
+            return $dbmeta;
         }
-        $dbmeta = new self::$dbms[$driver]($pdo);
+        $dbmeta = new self::$dbms[$driver];
+        $dbmeta->initConnection($pdo);
         return self::$cache[$driver] = $dbmeta;
     }
 }

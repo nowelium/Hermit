@@ -13,7 +13,7 @@ class HermitMySQLDatabaseMeta implements HermitDatabaseMeta {
     private $procedures = array();
     private $pdo;
     private $databaseName;
-    public function __construct(PDO $pdo){
+    public function initConnection(PDO $pdo){
         $this->pdo = $pdo;
         $this->databaseName = $this->getUsingDatabaseName();
     }
