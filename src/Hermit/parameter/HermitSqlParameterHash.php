@@ -114,6 +114,9 @@ class HermitSqlParameterHash extends HermitSqlParameter {
             }
             return 'false';
         }
+        if(is_array($value)){
+            return var_export($value, true);
+        }
         return $value;
     }
 }
