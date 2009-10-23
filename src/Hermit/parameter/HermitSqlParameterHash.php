@@ -4,6 +4,9 @@
  * @author nowelium
  */
 class HermitSqlParameterHash extends HermitSqlParameter {
+    
+    const PROPERTY_SEPARATOR = ' ';
+    
     protected $names = array();
     protected $bindKeys = array();
     public function add($name, $index){
@@ -41,13 +44,16 @@ class HermitSqlParameterHash extends HermitSqlParameter {
                 // value was dto
                 $r = new ReflectionClass($value);
                 $props = $r->getProperties();
-                foreach($props as $property){
+                foreach($props as $index => $property){
                     $propertyName = $property->getName();
-                    if(false === strpos($expression, $propertyName)){
+                    if(false === strpos($expression, $propertyName . self::PROPERTY_SEPARATOR)){
                         continue;
                     }
+                    
                     $namedValue = self::makeExpression($property->getValue($value));
-                    $expression = strtr($expression, array($propertyName => $namedValue));
+                    $expression = strtr($expression, array(
+                        $propertyName . self::PROPERTY_SEPARATOR => $namedValue . self::PROPERTY_SEPARATOR
+                    ));
                     if(eval('return ' . $expression . ';')){
                         return self::MONO_MATCHED;
                     }
@@ -77,11 +83,13 @@ class HermitSqlParameterHash extends HermitSqlParameter {
                 $props = $r->getProperties();
                 foreach($props as $property){
                     $propertyName = $property->getName();
-                    if(false === strpos($expression, $propertyName)){
+                    if(false === strpos($expression, $propertyName . self::PROPERTY_SEPARATOR)){
                         continue;
                     }
                     $namesValue = self::makeExpression($value->$propertyName);
-                    $expression = strtr($expression, array($propertyName => $namesValue));
+                    $expression = strtr($expression, array(
+                        $propertyName . self::PROPERTY_SEPARATOR => $namesValue . self::PROPERTY_SEPARATOR
+                    ));
                     if(eval('return ' . $expression . ';')){
                         $expression = $statement;
                     }
