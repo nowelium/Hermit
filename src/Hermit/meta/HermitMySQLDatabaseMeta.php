@@ -52,6 +52,10 @@ class HermitMySQLDatabaseMeta implements HermitDatabaseMeta {
         if(false === $paramList){
             throw new InvalidArgumentException('not found procedure name: ' . $procedure . ' in db: ' . $this->databaseName);
         }
+        
+        // replace (...) labels
+        // e.g. IN _hoge DECIMAL(10, 5), OUT _foo VARCHAR(20)
+        $paramList = preg_replace('/(\(([^\)]+)\))/', '', $paramList);
 
         $info = new HermitProcedureInfo;
         $info->setName($procedure);
