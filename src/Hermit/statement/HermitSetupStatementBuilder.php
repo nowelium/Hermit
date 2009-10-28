@@ -24,7 +24,7 @@ class HermitSetupStatementBuilder extends HermitProcedureStatementBuilder {
         
         $logger = HermitLoggerManager::getLogger();
         if($logger->isDebugEnabled()){
-            $logger->debug('{%s} preparedSql: "%s"', __CLASS__, $sql);
+            $logger->debug('{%s} preparedSql: "%s"', __CLASS__, $setupSql);
         }
         
         $statement = $pdo->prepare($setupSql);

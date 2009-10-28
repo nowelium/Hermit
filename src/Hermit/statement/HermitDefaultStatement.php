@@ -6,6 +6,7 @@
 class HermitDefaultStatement implements HermitStatement {
     protected $parameter;
     protected $statement;
+    protected $closeCursor = false;
     public function __construct(HermitSqlParameter $parameter, PDOStatement $statement){
         $this->parameter = $parameter;
         $this->statement = $statement;
@@ -14,6 +15,11 @@ class HermitDefaultStatement implements HermitStatement {
         $this->statement->closeCursor();
         unset($this->statement);
     }
+    public function closeCursor(){
+        $this->closeCursor = true;
+        return $this->statement->closeCursor();
+    }
+
     public function getSqlParameter(){
         return $this->parameter;
     }

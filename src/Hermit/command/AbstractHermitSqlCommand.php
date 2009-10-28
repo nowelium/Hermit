@@ -49,4 +49,21 @@ abstract class AbstractHermitSqlCommand implements HermitSqlCommand {
         $builder = new HermitStatementBuilder($this->context->getTargetClass(), $this->method, $this->sqlCreator);
         return $builder->build($pdo, $parameters);
     }
+
+    protected static function setupProcedureConnection(PDO $pdo){
+        $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        if(0 === strcasecmp('mysql', $driver)){
+            //
+            // procedure の out parameter などを取得しようとする際などにおいて
+            // 既に他のステートメントが発行されてしまっていると
+            // ステートメントを閉じても下記エラーが発生してしまう
+            // そのため、procedure を利用する時は direct query を使用する
+            //
+            // PDOException: SQLSTATE[HY000]: General error: 2014 Cannot execute queries while other unbuffered queries are active.
+            // Consider using PDOStatement::fetchAll().
+            // Alternatively, if your code is only ever going to run against mysql, you may enable query buffering by setting the PDO::MYSQL_ATTR_USE_BUFFERED_QUERY attribute.
+            //
+            $pdo->setAttribute(PDO::MYSQL_ATTR_DIRECT_QUERY, true);
+        }
+    }
 }
