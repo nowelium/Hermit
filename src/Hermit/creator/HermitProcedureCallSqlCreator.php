@@ -29,12 +29,17 @@ class HermitProcedureCallSqlCreator implements HermitSqlCreator, HermiSetupSqlCr
         $callSql .= ' ';
         $callSql .= $info->getName();
         $callSql .= '(';
+
+        $begin = false;
         foreach($parameterNames as $parameterName){
+            $begin = true;
             $callSql .= '/*' . $parameterName . '*/';
             $callSql .= '"' . $parameterName . '"';
             $callSql .= ',';
         }
-        $callSql = substr($callSql, 0, -1);
+        if($begin){
+            $callSql = substr($callSql, 0, -1);
+        }
         $callSql .= ')';
         return $callSql;
     }

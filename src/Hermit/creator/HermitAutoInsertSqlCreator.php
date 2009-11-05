@@ -16,12 +16,17 @@ class HermitAutoInsertSqlCreator implements HermitSqlCreator {
         $insert .= ' (';
         $insert .= join(', ', $columns);
         $insert .= ') VALUES (';
+
+        $begin = false;
         foreach($columns as $column){
+            $begin = true;
             $insert .= '/*' . $column . '*/';
             $insert .= '"' . $column . '"';
             $insert .= ',';
         }
-        $insert = substr($insert, 0, -1);
+        if($begin){
+            $insert = substr($insert, 0, -1);
+        }
         $insert .= ')';
         $this->insert = $insert;
     }

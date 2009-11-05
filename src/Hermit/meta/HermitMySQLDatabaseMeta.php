@@ -61,6 +61,9 @@ class HermitMySQLDatabaseMeta implements HermitDatabaseMeta {
         $info->setName($procedure);
         $chunk = array_map('trim', explode(',', $paramList));
         foreach($chunk as $field){
+            if(empty($field)){
+                continue;
+            }
             $sp = preg_split('/\s+/', $field);
 
             $inoutType = null;

@@ -19,14 +19,19 @@ class HermitAutoUpdateSqlCreator implements HermitSqlCreator, HermitAppendableSq
         $sql .= ' ';
         $sql .= 'SET';
         $sql .= ' ';
+
+        $begin = false;
         foreach($columns as $column){
+            $begin = true;
             $sql .= $column . '=';
             $sql .= '/*' . $column . '*/';
             $sql .= '"' . $column . '"';
             $sql .= ',';
         }
-        // -1 eq strlen(',')
-        $sql = substr($sql, 0, -1);
+        if($begin){
+            // -1 eq strlen(',')
+            $sql = substr($sql, 0, -1);
+        }
         
         $sql .= 'WHERE';
         $sql .= ' ';

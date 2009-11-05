@@ -20,7 +20,10 @@ class HermitAutoDeleteSqlCreator implements HermitSqlCreator, HermitAppendableSq
         $sql .= ' ';
         $sql .= 'WHERE';
         $sql .= ' ';
+
+        $begin = false;
         foreach($primaryKeys as $pk){
+            $begin = true;
             $sql .= ' ';
             $sql .= $pk . '=';
             $sql .= ' ';
@@ -29,7 +32,9 @@ class HermitAutoDeleteSqlCreator implements HermitSqlCreator, HermitAppendableSq
             $sql .= ' ';
             $sql .= 'AND';
         }
-        $sql = substr($sql, 0, -3);
+        if($begin){
+            $sql = substr($sql, 0, -3);
+        }
         $this->sql = $sql;
     }
     public function createSql(){
